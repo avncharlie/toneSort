@@ -1,7 +1,38 @@
-/* Sass Document */
+*
+	box-sizing: border-box
 
-/*$font-stack: monospace, sans-serif*/
-/*$primary-color: #EEE*/
+html, body
+	// to let .container fill whole area
+	height: 100%
+	margin: 0
 
-/*.dick 
-	font: 100% $font-stack*/
+.container
+	font-family: Raleway
+	height: 100%
+
+.output
+	// placed in .container
+	display: flex
+	lex-wrap: nowrap
+
+	width: 70%
+	height: 100%
+
+	background-color: lightblue
+
+.bar
+	width: 100%
+	//border-style: solid
+	background-color: red
+	height: 0%
+	align-self: flex-end
+
+	-webkit-transition: all .3s linear
+	-moz-transition: all .3s linear
+	-o-transition: all .3s linear
+
+#firstboi
+	background-color: blue
+
+//.output :nth-child(4) 
+//	order: 1
