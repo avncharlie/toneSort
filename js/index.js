@@ -47,16 +47,18 @@ function randomiseAndMoveBars(currentIndexArray) {
 $(document).ready(function() {
 	"use strict";
 	
-	// initialise and colour bars in order
-	createBars(indexArray.length);
-	initBars(indexArray);
+	// initialise bars
+	addBars(indexArray.length);
+	initBarHeights(indexArray.length);
+	
+	// colour bars
 	colourBars(indexArray.length);
 	
 	//indexArray = randomiseAndMoveBars(indexArray);
 });
 
 // initialises bars as empty divs and add to DOM
-function createBars(numBars) {
+function addBars(numBars) {
 	"use strict";
 	for (var x = 0; x < numBars; x++){
 		var foo = $("<div></div>").addClass("bar");
@@ -76,13 +78,13 @@ function colourBars(numBars) {
 	});
 }
 
-// initalise height of bars based on given indexArray
-function initBars(indexArray) {
+// initalise height of bars based on given number of bars
+function initBarHeights(numBars) {
 	"use strict";
 	var heightCounter = 0;
 	var counter = 0;
 	$('.output').children('div').each(function () {
-		heightCounter = heightCounter + (100/indexArray.length);
+		heightCounter = heightCounter + (100/numBars);
 		$(this).css({"height": heightCounter + "%"}).attr({id: counter});
 		counter++;
 	});
