@@ -6,7 +6,7 @@ var indexArray;
 // ui at side
 
 // stores indexes of items as they get sorted
-indexArray = [...Array(30).keys()];
+indexArray = [...Array(50).keys()];
 
 // shuffle array
 function shuffleArray(array) {
