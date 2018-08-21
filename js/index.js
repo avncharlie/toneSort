@@ -1,21 +1,64 @@
 var indexArray;
 
+// random bar arranging
+// adding/taking away bars (recolouring)
+// actual sorting
+// ui at side
+
 // stores indexes of items as they get sorted
 indexArray = [...Array(20).keys()];
+
+// shuffle array
+function shuffleArray(array) {
+	"use strict";
+	
+	var currentIndex = array.length, temporaryValue, randomIndex;
+
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		// And swap it with the current element.
+		temporaryValue = array[currentIndex];
+		array[currentIndex] = array[randomIndex];
+    	array[randomIndex] = temporaryValue;
+	}
+
+	return array;
+}
+
+// randomises bars
+function randomiseAndMoveBars(currentIndexArray) {
+	"use strict";
+	
+	// shuffle them
+	var newIndexArray = shuffleArray(currentIndexArray);
+	
+	// move to positions
+	moveBarsToPositions(indexArray, newIndexArray);
+	
+	return newIndexArray;
+}
 
 // init on document load
 $(document).ready(function() {
 	"use strict";
 	
-	createBars(indexArray);
+	// initialise and colour bars in order
+	createBars(indexArray.length);
 	initBars(indexArray);
 	colourBars(indexArray.length);
+	
+	//indexArray = randomiseAndMoveBars(indexArray);
 });
 
 // initialises bars as empty divs and add to DOM
-function createBars(indexArray) {
+function createBars(numBars) {
 	"use strict";
-	for (var x = 0; x < indexArray.length; x++){
+	for (var x = 0; x < numBars; x++){
 		var foo = $("<div></div>").addClass("bar");
 		$(".output").append(foo);
 	}
@@ -110,5 +153,27 @@ function swapBars(startSwapIndex, endSwapIndex, arrayIndexes) {
 			var transformEnd = (endIndexes[x] - arrayIndexes[endIndexes[x]]) * 100 - shiftVal;
 			$("#" + arrayIndexes[endIndexes[x]]).css({transform: "translateX(" + transformEnd + "%)"});
 		}
+	}
+}
+
+// given an array move bars to positions in array
+function moveBarsToPositions(currentIndexArray, newIndexArray) {
+	"use strict";
+	
+	var currentTransfrom;
+	var neededTransfrom;
+	var finalTransfrom;
+	for (var x = 0; x < currentIndexArray.length; x++) {
+		// get transfrom in current state
+		currentTransfrom = (x - currentIndexArray[x]) * 100;
+		
+		// get needed transform
+		neededTransfrom = (newIndexArray.indexOf(currentIndexArray[x]) - x) * 100;
+		
+		// calculate final transfrom
+		finalTransfrom = currentTransfrom + neededTransfrom;
+		
+		$("#" + currentIndexArray[x]).css({transform: "translateX(" + finalTransfrom + "%)"});
+		
 	}
 }
