@@ -1,7 +1,7 @@
 var indexArray;
 
 // stores indexes of items as they get sorted
-indexArray = [0, 1, 2, 3, 4, 5];
+indexArray = [...Array(20).keys()];
 
 // init on document load
 $(document).ready(function() {
@@ -9,6 +9,7 @@ $(document).ready(function() {
 	
 	createBars(indexArray);
 	initBars(indexArray);
+	colourBars(indexArray.length);
 });
 
 // initialises bars as empty divs and add to DOM
@@ -18,6 +19,18 @@ function createBars(indexArray) {
 		var foo = $("<div></div>").addClass("bar");
 		$(".output").append(foo);
 	}
+}
+
+// colour bars
+function colourBars(numBars) {
+	"use strict";
+	var scales = chroma.scale(["#FFD184", "#7B68EE"]).colors(numBars);
+	
+	var counter = 0;
+	$('.output').children('div').each(function () {
+		$(this).css({"background-color": scales[counter]}).attr({id: counter});
+		counter++;
+	});
 }
 
 // initalise height of bars based on given indexArray
