@@ -5,25 +5,26 @@ html, body {
   height: 100%;
   margin: 0; }
 
-.container {
+#container {
   font-family: Raleway;
   height: 100%;
   background-color: #EEEEEE82; }
-
-.output {
-  display: flex;
-  lex-wrap: nowrap;
-  width: 80%;
-  height: 100%; }
-
-.bar {
-  width: 100%;
-  background-color: white;
-  height: 0%;
-  align-self: flex-end;
-  transition: all 0.3s linear; }
-
-#firstboi {
-  background-color: blue; }
+  #container #output {
+    float: left;
+    display: flex;
+    width: 80%;
+    height: 100%;
+    background-color: #F1EEFF; }
+    #container #output .bar {
+      width: 100%;
+      background-color: white;
+      height: 0%;
+      align-self: flex-end;
+      transition: all 0.3s linear; }
+  #container #controls {
+    float: right;
+    background-color: #FFFBEC;
+    width: 20%;
+    height: 100%; }
 
 /*# sourceMappingURL=style.css.map */

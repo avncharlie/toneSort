@@ -2,29 +2,31 @@
 	box-sizing: border-box
 
 html, body
-	// to let .container fill whole area
 	height: 100%
 	margin: 0
 
-.container
+#container
 	font-family: Raleway
 	height: 100%
-	background-color: #EEEEEE82
+	background-color: unquote("#EEEEEE82")
+	//background-color: #F7EDFF
 
-.output
-	// placed in .container
-	display: flex
-	lex-wrap: nowrap
+	#output
+		float: left
+		display: flex
+		width: 80%
+		height: 100%
+		background-color: unquote("#F1EEFF")
 
-	width: 80%
-	height: 100%
+		.bar
+			width: 100%
+			background-color: white
+			height: 0%
+			align-self: flex-end
+			transition: all 0.3s linear
 
-.bar
-	width: 100%
-	background-color: white
-	height: 0%
-	align-self: flex-end
-	transition: all .3s linear
-
-#firstboi
-	background-color: blue
+	#controls
+		float: right
+		background-color: unquote("#FFFBEC")
+		width: 20%
+		height: 100%

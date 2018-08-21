@@ -6,7 +6,7 @@ var indexArray;
 // ui at side
 
 // stores indexes of items as they get sorted
-indexArray = [...Array(20).keys()];
+indexArray = [...Array(30).keys()];
 
 // shuffle array
 function shuffleArray(array) {
@@ -54,6 +54,10 @@ $(document).ready(function() {
 	// colour bars
 	colourBars(indexArray.length);
 	
+	//for (var x = 0; x < 100; x++) {
+	//	indexArray = randomiseAndMoveBars(indexArray);
+	//}
+	
 	//indexArray = randomiseAndMoveBars(indexArray);
 });
 
@@ -62,7 +66,7 @@ function addBars(numBars) {
 	"use strict";
 	for (var x = 0; x < numBars; x++){
 		var foo = $("<div></div>").addClass("bar");
-		$(".output").append(foo);
+		$("#output").append(foo);
 	}
 }
 
@@ -72,7 +76,7 @@ function colourBars(numBars) {
 	var scales = chroma.scale(["#FFD184", "#7B68EE"]).colors(numBars);
 	
 	var counter = 0;
-	$('.output').children('div').each(function () {
+	$('#output').children('.bar').each(function () {
 		$(this).css({"background-color": scales[counter]}).attr({id: counter});
 		counter++;
 	});
@@ -83,7 +87,7 @@ function initBarHeights(numBars) {
 	"use strict";
 	var heightCounter = 0;
 	var counter = 0;
-	$('.output').children('div').each(function () {
+	$('#output').children('.bar').each(function () {
 		heightCounter = heightCounter + (100/numBars);
 		$(this).css({"height": heightCounter + "%"}).attr({id: counter});
 		counter++;
