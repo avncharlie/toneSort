@@ -1,12 +1,11 @@
 var indexArray;
 
-// random bar arranging
 // adding/taking away bars (recolouring)
 // actual sorting
 // ui at side
 
 // stores indexes of items as they get sorted
-indexArray = [...Array(50).keys()];
+indexArray = [...Array(5).keys()];
 
 // shuffle array
 function shuffleArray(array) {
@@ -28,6 +27,39 @@ function shuffleArray(array) {
 	}
 
 	return array;
+}
+
+// adds new bars and returns new indexArray
+function addNewBars(numNewBars, currentIndexArray) {
+	"use strict";
+	
+	// create new new indexArray
+	var highestCurrentIndex = currentIndexArray[currentIndexArray.length - 1];
+	var newIndexArray = currentIndexArray;
+	for (var x = highestCurrentIndex + 1; x < numNewBars + highestCurrentIndex + 1; x++) {
+		newIndexArray.push(x);
+	}
+	
+	// add bars visually
+	addBars(numNewBars);
+	initBarHeights(newIndexArray.length);
+	colourBars(newIndexArray.length);
+	
+	return newIndexArray;
+}
+
+// remove bars and return new indexArray
+function removeBars(numBarsToRemove, currentIndexArray) {
+	"use strict";
+	
+	var newIndexArray = currentIndexArray;
+	for (var x = 0; x < numBarsToRemove; x++) {
+		$("#" + newIndexArray.pop()).remove();
+	}
+	
+	initBarHeights(newIndexArray.length);
+	colourBars(newIndexArray.length);
+	return newIndexArray;
 }
 
 // randomises bars
