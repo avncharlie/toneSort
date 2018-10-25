@@ -1,3 +1,15 @@
+// button colours
+$button-primary-color: unquote("#88B5F4")
+
+// container gradients
+$controls-top-gradient: unquote("#D9FEBA")
+$controls-bottom-gradient: unquote("#FFE584")
+$output-top-right-gradient: unquote("#FCD0F4ED")
+$output-bottom-left-gradient: unquote("#FFECA8C9")
+
+// transition delay for control elements
+$control-transition-delay: 0.15s
+
 *
 	box-sizing: border-box
 
@@ -6,15 +18,15 @@ html, body
 	margin: 0px
 
 #container
-	font-family: Raleway
+	//font-family: Raleway
 	height: 100%
 
 	#output
 		float: left
 		display: flex
-		width: 85%
+		width: 80%
 		height: 100%
-		background: linear-gradient(to bottom left, unquote("#FCD0F4ED"), unquote("#FFECA8C9"))
+		background: linear-gradient(to bottom left, $output-top-right-gradient,$output-bottom-left-gradient)
 
 		.bar
 			width: 100%
@@ -25,6 +37,54 @@ html, body
 
 	#controls
 		float: right
-		background: linear-gradient(unquote("#D9FEBA"), unquote("#FFE584")) 
-		width: 15%
+		background: linear-gradient($controls-top-gradient, $controls-bottom-gradient) 
+		width: 20%
 		height: 100%
+
+		.button
+			font-family: Raleway
+			background-color: transparent
+			border: none
+			padding: 15px 32px
+			text-align: center
+			font-size: 1.2em
+			font-weight: bold
+			width: calc(100% - 20px)
+			margin: 10px 10px 0px 10px
+			color: $button-primary-color
+			border-style: solid
+			border-width: 3px
+			text-transform: uppercase
+			transition: all $control-transition-delay linear
+			
+			&:focus
+				outline: none
+
+			&:hover
+				color: $controls-top-gradient
+				background-color: $button-primary-color
+				border-color: $button-primary-color
+	
+		.slidecontainer
+			width: calc(100% - 23px)
+			margin: 10px
+
+		.slider
+			width: 100%
+			appearance: none
+			width: 100%
+			height: 25px
+			outline: none
+			opacity: 0.7
+			transition: all $control-transition-delay linear
+			
+			&:hover
+				opacity: 1
+
+			&::-webkit-slider-thumb
+				appearance: none
+				width: 25px /* Set a specific slider handle width */
+				height: 25px /* Slider handle height */
+				background: #4CAF50 /* Green background */
+				cursor: pointer /* Cursor on hover */
+			

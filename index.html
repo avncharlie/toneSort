@@ -17,7 +17,7 @@
   
   <!-- LIBRARIES -->
   <script type="text/javascript" src="js/jquery.min.js" defer></script>
-  <script type="text/javascript" src="js/chroma.min.js" async defer></script>
+  <script type="text/javascript" src="js/chroma.min.js" defer></script>
   
   <!-- MAIN SCRIPT -->
   <script type="text/javascript" src="js/index.js" defer></script>
@@ -25,8 +25,16 @@
 
 <body>
   <div id="container">
-  	<div id="output"></div>
-  	<div id="controls"></div>
+    <div id="output"></div>
+    
+    <div id="controls">
+  	  <button id="randomise" class="button">randomise</button>
+  	  
+  	   <div class="slidecontainer">
+  	     <input type="range" min="3" max="100" value="20" class="slider" id="numBars">
+  	   </div>
+  	</div>
+  	
   </div>
 </body>
 </html>

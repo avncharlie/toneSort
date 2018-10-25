@@ -1,11 +1,18 @@
+/*jshint esversion: 6 */
+
 var indexArray;
 
-// adding/taking away bars (recolouring)
 // actual sorting
 // ui at side
 
 // stores indexes of items as they get sorted
-indexArray = [...Array(5).keys()];
+indexArray = [...Array(20).keys()];
+
+// randomise button (randomises bars)
+$("#randomise").click(function() {
+	"use strict";
+	indexArray = randomiseAndMoveBars(indexArray);
+});
 
 // shuffle array
 function shuffleArray(array) {
@@ -29,38 +36,72 @@ function shuffleArray(array) {
 	return array;
 }
 
-// adds new bars and returns new indexArray
-function addNewBars(numNewBars, currentIndexArray) {
-	"use strict";
-	
-	// create new new indexArray
-	var highestCurrentIndex = currentIndexArray[currentIndexArray.length - 1];
-	var newIndexArray = currentIndexArray;
-	for (var x = highestCurrentIndex + 1; x < numNewBars + highestCurrentIndex + 1; x++) {
-		newIndexArray.push(x);
-	}
-	
-	// add bars visually
-	addBars(numNewBars);
-	initBarHeights(newIndexArray.length);
-	colourBars(newIndexArray.length);
-	
-	return newIndexArray;
+// when passed a dictionary and a value return the corresponding key
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
 }
 
-// remove bars and return new indexArray
-function removeBars(numBarsToRemove, currentIndexArray) {
+// close gaps in indexArray
+function closeHoles(origArray) {
 	"use strict";
 	
-	var newIndexArray = currentIndexArray;
-	for (var x = 0; x < numBarsToRemove; x++) {
-		$("#" + newIndexArray.pop()).remove();
+	// create a dictionary in the form {origArrayItemIndex: origArrayItem}
+	var indexMaps = {};
+	for (var x = 0; x < origArray.length; x++) {
+		indexMaps[x] = origArray[x];
 	}
 	
-	initBarHeights(newIndexArray.length);
-	colourBars(newIndexArray.length);
-	return newIndexArray;
+	// sort origArray
+	origArray.sort((a, b) => a - b);
+	
+	// close gaps
+	for (var y = 0; y < origArray.length; y++) {
+		$("#" + origArray[y]).attr({"id": y});
+		indexMaps[getKeyByValue(indexMaps, origArray[y])] = y;
+	}
+	
+	// create final array from indexMaps
+	var newArray = [];
+	for (var z = 0; z < origArray.length; z++) {
+		newArray.push(indexMaps[z]);
+	}
+	
+	return newArray;
 }
+
+// change number of bars on slider movement
+$("#numBars").on('input', function(e) {
+	"use strict";
+	
+	var currentNumBars = indexArray.length;
+    var newNumBars = $(e.target).val();
+
+	if (newNumBars > currentNumBars) {
+		var newIndexArray = [...Array(indexArray.length).keys()];
+		moveBarsToPositions(indexArray, newIndexArray);
+		
+		indexArray = newIndexArray;
+		
+		addBars(newNumBars - indexArray.length);
+		
+		indexArray = [...Array(Number(newNumBars)).keys()];
+		
+		initBarHeights(indexArray.length);
+		colourBars(indexArray.length);
+	} else {
+		var newIndexArray = [...Array(indexArray.length).keys()];
+		moveBarsToPositions(indexArray, newIndexArray);
+		
+		indexArray = newIndexArray;
+		
+		for (var x = 0; x < indexArray.length - newNumBars; x++) {
+			$("#" + indexArray.pop()).remove();
+		}
+		
+		initBarHeights(indexArray.length);
+		colourBars(indexArray.length);
+	}
+});
 
 // randomises bars
 function randomiseAndMoveBars(currentIndexArray) {
