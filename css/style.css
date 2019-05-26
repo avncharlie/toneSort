@@ -1,33 +1,31 @@
 * {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box; }
+  box-sizing: border-box; }
 
 html, body {
   height: 100%;
   margin: 0px; }
 
+.bar-selected {
+  background-color: #7054B2 !important; }
+
 #container {
   height: 100%; }
   #container #output {
     float: left;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
+    flex-direction: row;
     width: 80%;
     height: 100%;
-    background: -webkit-gradient(linear, right top, left bottom, from(#FCD0F4ED), to(#FFECA8C9));
     background: linear-gradient(to bottom left, #FCD0F4ED, #FFECA8C9); }
     #container #output .bar {
       width: 100%;
       background-color: white;
       height: 0%;
-      -ms-flex-item-align: end;
-          align-self: flex-end;
-      -webkit-transition: all 0.3s linear;
-      transition: all 0.3s linear; }
+      align-self: flex-end;
+      transition: all 0.3s linear;
+      -webkit-backface-visibility: hidden; }
   #container #controls {
     float: right;
-    background: -webkit-gradient(linear, left top, left bottom, from(#D9FEBA), to(#FFE584));
     background: linear-gradient(#D9FEBA, #FFE584);
     width: 20%;
     height: 100%; }
@@ -45,7 +43,6 @@ html, body {
       border-style: solid;
       border-width: 3px;
       text-transform: uppercase;
-      -webkit-transition: all 0.15s linear;
       transition: all 0.15s linear; }
       #container #controls .button:focus {
         outline: none; }
@@ -58,20 +55,16 @@ html, body {
       margin: 10px; }
     #container #controls .slider {
       width: 100%;
-      -webkit-appearance: none;
-         -moz-appearance: none;
-              appearance: none;
+      appearance: none;
       width: 100%;
       height: 25px;
       outline: none;
       opacity: 0.7;
-      -webkit-transition: all 0.15s linear;
       transition: all 0.15s linear; }
       #container #controls .slider:hover {
         opacity: 1; }
       #container #controls .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-                appearance: none;
+        appearance: none;
         width: 25px;
         height: 25px;
         background: #4CAF50;

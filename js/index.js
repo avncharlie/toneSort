@@ -4,14 +4,24 @@ var indexArray;
 
 // actual sorting
 // ui at side
+// fix up slider UI
+// 
 
 // stores indexes of items as they get sorted
-indexArray = [...Array(20).keys()];
+indexArray = [...Array(3).keys()];
+
+// delay
+var delay = 15;
 
 // randomise button (randomises bars)
 $("#randomise").click(function() {
 	"use strict";
 	indexArray = randomiseAndMoveBars(indexArray);
+});
+
+$("#sort").click(function() {
+	"use strict";
+	playAnimation2(generateBubbleSort(indexArray));
 });
 
 // shuffle array
@@ -34,39 +44,6 @@ function shuffleArray(array) {
 	}
 
 	return array;
-}
-
-// when passed a dictionary and a value return the corresponding key
-function getKeyByValue(object, value) {
-  return Object.keys(object).find(key => object[key] === value);
-}
-
-// close gaps in indexArray
-function closeHoles(origArray) {
-	"use strict";
-	
-	// create a dictionary in the form {origArrayItemIndex: origArrayItem}
-	var indexMaps = {};
-	for (var x = 0; x < origArray.length; x++) {
-		indexMaps[x] = origArray[x];
-	}
-	
-	// sort origArray
-	origArray.sort((a, b) => a - b);
-	
-	// close gaps
-	for (var y = 0; y < origArray.length; y++) {
-		$("#" + origArray[y]).attr({"id": y});
-		indexMaps[getKeyByValue(indexMaps, origArray[y])] = y;
-	}
-	
-	// create final array from indexMaps
-	var newArray = [];
-	for (var z = 0; z < origArray.length; z++) {
-		newArray.push(indexMaps[z]);
-	}
-	
-	return newArray;
 }
 
 // change number of bars on slider movement
@@ -101,6 +78,12 @@ $("#numBars").on('input', function(e) {
 		initBarHeights(indexArray.length);
 		colourBars(indexArray.length);
 	}
+});
+
+// change delay according to slider
+$("#delay").on('input', function(e) {
+	"use strict";
+    delay = $(e.target).val();
 });
 
 // randomises bars
@@ -255,4 +238,139 @@ function moveBarsToPositions(currentIndexArray, newIndexArray) {
 		$("#" + currentIndexArray[x]).css({transform: "translateX(" + finalTransfrom + "%)"});
 		
 	}
+}
+
+function selectBar(barID) {
+	"use strict";
+	$("#" + barID).addClass("bar-selected");
+}
+
+function deselectBar(barID) {
+	"use strict";
+	$("#" + barID).removeClass("bar-selected");
+}
+
+function generateBubbleSort(indexArray) {
+	"use strict";
+	
+	var animations = [];
+	
+	var sortedIndex = indexArray.length;
+	var swappedLastRun = true;
+	while (swappedLastRun === true) {
+		swappedLastRun = false;
+		
+		animations.push({
+			action: "DESELECT",
+			bars: [indexArray[sortedIndex+1]],
+			array: indexArray.slice()
+		});
+		
+		var x = 0;
+		animations.push({
+			action: "SELECT",
+			bars: [indexArray[0]],
+			array: indexArray.slice()
+		});
+		
+		while (x < sortedIndex) {
+			if (indexArray[x] > indexArray[x+1]) {
+				
+				animations.push({
+					action: "SELECT",
+					bars: [indexArray[x+1]],
+					array: indexArray.slice()
+				});
+				
+				animations.push({
+					action: "SWAP",
+					bars: [x, x+1],
+					array: indexArray.slice()
+				});
+				
+				[indexArray[x], indexArray[x+1]] = [indexArray[x+1], indexArray[x]];
+				
+				animations.push({
+					action: "DESELECT",
+					bars: [indexArray[x]],
+					array: indexArray.slice()
+				});
+				
+				swappedLastRun = true;
+			}
+			
+			x++;
+			animations.push({
+				action: "SELECT",
+				bars: [indexArray[x]],
+				array: indexArray.slice()
+			});
+			
+			animations.push({
+				action: "DESELECT",
+				bars: [indexArray[x-1]],
+				array: indexArray.slice()
+			});
+		}
+		sortedIndex--;
+	}
+	animations.push({
+		action: "DESELECT",
+		bars: [indexArray[sortedIndex+1]],
+		array: indexArray.slice()
+	});
+	return animations;
+}
+
+function playAnimation2(animation) {
+	"use strict";
+
+	var i = 0;
+
+	function recursiveAnimationDelayLoop () {
+   		setTimeout(function () {
+			if (animation[i].action === "SELECT") {
+				selectBar(animation[i].bars[0]);
+				console.log("SELECTING: " + animation[i].bars[0]);
+				
+			} else if (animation[i].action === "DESELECT") {
+				console.log("DESELECTING: " + animation[i].bars[0]);
+				deselectBar(animation[i].bars[0]);
+				
+			}
+			else {
+				swapBars(animation[i].bars[0], animation[i].bars[1], animation[i].array);
+				console.log("SWAPPING: " + animation[i].array[animation[i].bars[0]]+ ", " + animation[i].array[animation[i].bars[1]]);
+			}
+			
+			i++;
+			if (i < animation.length) {
+				recursiveAnimationDelayLoop();
+			}
+		}, delay);
+	}
+
+	recursiveAnimationDelayLoop();
+}
+
+function playAnimation(animation, delay) {
+	"use strict";
+	
+	for (let i=0; i<animation.length; i++) {
+        setTimeout( function timer(){
+        	if (animation[i].action === "SELECT") {
+				selectBar(animation[i].bars[0]);
+				console.log("SELECTING: " + animation[i].bars[0]);
+				
+			} else if (animation[i].action === "DESELECT") {
+				console.log("DESELECTING: " + animation[i].bars[0]);
+				deselectBar(animation[i].bars[0]);
+				
+			}
+			else {
+				swapBars(animation[i].bars[0], animation[i].bars[1], animation[i].array);
+				console.log("SWAPPING: " + animation[i].array[animation[i].bars[0]]+ ", " + animation[i].array[animation[i].bars[1]]);
+			}
+    	}, i*delay );
+	}	
 }

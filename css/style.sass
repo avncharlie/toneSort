@@ -7,6 +7,9 @@ $controls-bottom-gradient: unquote("#FFE584")
 $output-top-right-gradient: unquote("#FCD0F4ED")
 $output-bottom-left-gradient: unquote("#FFECA8C9")
 
+// selected bar colour
+$bar-selected-colour: unquote("#7054B2")
+
 // transition delay for control elements
 $control-transition-delay: 0.15s
 
@@ -17,13 +20,16 @@ html, body
 	height: 100%
 	margin: 0px
 
+.bar-selected
+	background-color: $bar-selected-colour !important
+
 #container
-	//font-family: Raleway
 	height: 100%
 
 	#output
 		float: left
 		display: flex
+		flex-direction: row
 		width: 80%
 		height: 100%
 		background: linear-gradient(to bottom left, $output-top-right-gradient,$output-bottom-left-gradient)
@@ -34,6 +40,11 @@ html, body
 			height: 0%
 			align-self: flex-end
 			transition: all 0.3s linear
+			-webkit-backface-visibility: hidden
+			
+			//transform: translate3d(0,0,0)
+			//-webkit-backface-visibility: hidden
+			//-webkit-transform: translateZ(0) scale(1.0, 1.0)
 
 	#controls
 		float: right
