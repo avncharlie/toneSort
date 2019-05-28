@@ -1,30 +1,58 @@
 /*jshint esversion: 6 */
 
-var indexArray;
+// once set here, will update through interface
+var startingBars = 10;
 
-// actual sorting
-// ui at side
-// fix up slider UI
-// 
+var canvasSelector = "#barDisplay";
+var canvasParentSelector = "#output";
 
-// stores indexes of items as they get sorted
-indexArray = [...Array(3).keys()];
+var colourGradient = ["#FFD184", "#7B68EE"];
 
-// delay
-var delay = 15;
+// start off with 10 bars
+var bars = [...Array(startingBars).keys()];
 
-// randomise button (randomises bars)
+// randomise bars
 $("#randomise").click(function() {
 	"use strict";
-	indexArray = randomiseAndMoveBars(indexArray);
+    var canvas = $(canvasSelector);
+    // shuffle bars
+	shuffleArray(bars);
+    // redraw canvas
+    canvas.clearCanvas();
+    // draw
+    drawBars(bars, colourGradient, canvas);
 });
 
-$("#sort").click(function() {
+// update the number of bars slider and all its related components
+// ensures it is visible
+function updateNumBars(newNumBars) {
+    "use strict";
+    $("#numBars").val(newNumBars);
+    var convertedPercentage = ((newNumBars-3)/97)*100;
+    var offset = 2;
+    $("#numBarsDisplay").css('left', 'calc(' + convertedPercentage + '% - ' + (30*convertedPercentage/100 - offset) +'px)');
+    $("#numBars").css('display', 'block');
+    $("#numBarsDisplay").css('display', 'block');
+    $("#numBarsDisplay").text(newNumBars);
+}
+
+// add or take away bars
+$("#numBars").on('input', function(e) {
 	"use strict";
-	playAnimation2(generateBubbleSort(indexArray));
+    
+    var newNumBars = $(e.target).val();
+    updateNumBars(newNumBars);
+    
+    var canvas = $(canvasSelector);
+    // create new bars array
+    bars = [...Array(Number(newNumBars)).keys()];
+    // redraw canvas
+    canvas.clearCanvas();
+    // draw
+    drawBars(bars, colourGradient, canvas);
 });
 
-// shuffle array
+// helper to shuffle array
 function shuffleArray(array) {
 	"use strict";
 	
@@ -44,333 +72,47 @@ function shuffleArray(array) {
 	}
 
 	return array;
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
-// change number of bars on slider movement
-$("#numBars").on('input', function(e) {
-	"use strict";
-	
-	var currentNumBars = indexArray.length;
-    var newNumBars = $(e.target).val();
-
-	if (newNumBars > currentNumBars) {
-		var newIndexArray = [...Array(indexArray.length).keys()];
-		moveBarsToPositions(indexArray, newIndexArray);
-		
-		indexArray = newIndexArray;
-		
-		addBars(newNumBars - indexArray.length);
-		
-		indexArray = [...Array(Number(newNumBars)).keys()];
-		
-		initBarHeights(indexArray.length);
-		colourBars(indexArray.length);
-	} else {
-		var newIndexArray = [...Array(indexArray.length).keys()];
-		moveBarsToPositions(indexArray, newIndexArray);
-		
-		indexArray = newIndexArray;
-		
-		for (var x = 0; x < indexArray.length - newNumBars; x++) {
-			$("#" + indexArray.pop()).remove();
-		}
-		
-		initBarHeights(indexArray.length);
-		colourBars(indexArray.length);
-	}
-});
-
-// change delay according to slider
-$("#delay").on('input', function(e) {
-	"use strict";
-    delay = $(e.target).val();
-});
-
-// randomises bars
-function randomiseAndMoveBars(currentIndexArray) {
-	"use strict";
-	
-	// shuffle them
-	var newIndexArray = shuffleArray(currentIndexArray);
-	
-	// move to positions
-	moveBarsToPositions(indexArray, newIndexArray);
-	
-	return newIndexArray;
+// bars doesn't have to be in order
+function drawBars(bars, colorGradient, canvas) {
+    "use strict";
+    var colourScales = chroma.scale(colorGradient).colors(bars.length);
+    
+    var barWidth = canvas.innerWidth() / bars.length ;
+    var pixelHeightIncrement =  canvas.innerHeight() / (Math.max(...bars) + 1);
+    
+    for (var barIndex = 0; barIndex < bars.length ; barIndex++) {
+        var height = pixelHeightIncrement * (bars[barIndex] + 1);
+        canvas.drawRect({
+            layer: true,
+            name: '#' + bars[barIndex],
+            fillStyle: colourScales[bars[barIndex]],
+            x: barWidth * barIndex + barWidth/2, y: canvas.innerHeight() - height/2,
+            width: barWidth,
+            height: height
+        });
+    }
 }
 
 // init on document load
 $(document).ready(function() {
 	"use strict";
-	
-	// initialise bars
-	addBars(indexArray.length);
-	initBarHeights(indexArray.length);
-	
-	// colour bars
-	colourBars(indexArray.length);
-	
-	//for (var x = 0; x < 100; x++) {
-	//	indexArray = randomiseAndMoveBars(indexArray);
-	//}
-	
-	//indexArray = randomiseAndMoveBars(indexArray);
+    
+    // initialise numBars slider to whatever it is
+    updateNumBars(startingBars);
+    
+    var canvas = $(canvasSelector), 
+        ctx = canvas[0].getContext('2d');
+    
+    // set width and height of canvas to parent width and height
+    ctx.canvas.height = $(canvasParentSelector).innerHeight();
+    ctx.canvas.width = $(canvasParentSelector).innerWidth();
+    
+    // draw bars after initialisation
+    drawBars(bars, colourGradient, canvas);
 });
-
-// initialises bars as empty divs and add to DOM
-function addBars(numBars) {
-	"use strict";
-	for (var x = 0; x < numBars; x++){
-		var foo = $("<div></div>").addClass("bar");
-		$("#output").append(foo);
-	}
-}
-
-// colour bars
-function colourBars(numBars) {
-	"use strict";
-	var scales = chroma.scale(["#FFD184", "#7B68EE"]).colors(numBars);
-	
-	var counter = 0;
-	$('#output').children('.bar').each(function () {
-		$(this).css({"background-color": scales[counter]}).attr({id: counter});
-		counter++;
-	});
-}
-
-// initalise height of bars based on given number of bars
-function initBarHeights(numBars) {
-	"use strict";
-	var heightCounter = 0;
-	var counter = 0;
-	$('#output').children('.bar').each(function () {
-		heightCounter = heightCounter + (100/numBars);
-		$(this).css({"height": heightCounter + "%"}).attr({id: counter});
-		counter++;
-	});
-}
-
-// swaps the two requested bar indexes. if startSwapIndex is an array, will swap all indexes in that array
-function swapBars(startSwapIndex, endSwapIndex, arrayIndexes) {
-	"use strict";
-	
-	// swapping one element
-	if (typeof(startSwapIndex) === 'number') {
-		// calculate current transform values of indexes in percentages
-		var currentStartIndexTransfromVal = (startSwapIndex - arrayIndexes[startSwapIndex]) * 100;
-		var currentEndIndexTransfromVal = (endSwapIndex - arrayIndexes[endSwapIndex]) * 100;
-	
-		// calculate the transform to be applied (distance of indexes + current transfrom vals)
-		var startTransfrom = (endSwapIndex-startSwapIndex) * 100 + currentStartIndexTransfromVal;
-		var endTransfrom = (startSwapIndex-endSwapIndex) * 100 + currentEndIndexTransfromVal;
-	
-		// animate transform
-		$("#" + arrayIndexes[startSwapIndex]).css({transform: "translateX(" + startTransfrom + "%)"});
-		$("#" + arrayIndexes[endSwapIndex]).css({transform: "translateX(" + endTransfrom + "%)"});
-	} else {
-		// swapping multiple elements
-		var largestIndex = startSwapIndex[startSwapIndex.length - 1];
-		var smallestIndex = startSwapIndex[0];
-		
-		// calculate shift values and end values to be swapped
-		var shiftVal;
-		var endIndexes = [];
-		if (endSwapIndex >  largestIndex) {
-			// rightways shift
-			shiftVal = endSwapIndex - largestIndex;
-			for (var a = largestIndex + 1; a <= endSwapIndex; a++) {
-				endIndexes.push(a);
-			}
-		} else {
-			// leftways shift
-			shiftVal = endSwapIndex - smallestIndex;
-			for (var b = endSwapIndex; b < smallestIndex; b++) {
-				endIndexes.push(b);
-			}
-		}
-		shiftVal *= 100;
-		
-		// translating all elements in whatever direction
-		for (var x = 0; x < startSwapIndex.length; x++) {
-			var transformStart = (startSwapIndex[x] - arrayIndexes[startSwapIndex[x]]) * 100 + shiftVal;
-			$("#" + arrayIndexes[startSwapIndex[x]]).css({transform: "translateX(" + transformStart + "%)"});
-		}
-		
-		// moving all elements to be swapped backwards
-		
-		// SHIFTVAL NEEDS TO BE RECALCULATED
-		// if shift from left to right, smallest endval to smallest startval
-		// else, biggest endval to 
-		
-		if (endSwapIndex >  largestIndex) {
-			// rightways shift
-			shiftVal = endIndexes[0] - startSwapIndex[0];
-		} else {
-			// leftways shift
-			shiftVal = endIndexes[endIndexes.length - 1] - startSwapIndex[startSwapIndex.length - 1];
-		}
-		shiftVal *= 100;
-		
-		for (x = 0; x < endIndexes.length; x++) {
-			var transformEnd = (endIndexes[x] - arrayIndexes[endIndexes[x]]) * 100 - shiftVal;
-			$("#" + arrayIndexes[endIndexes[x]]).css({transform: "translateX(" + transformEnd + "%)"});
-		}
-	}
-}
-
-// given an array move bars to positions in array
-function moveBarsToPositions(currentIndexArray, newIndexArray) {
-	"use strict";
-	
-	var currentTransfrom;
-	var neededTransfrom;
-	var finalTransfrom;
-	for (var x = 0; x < currentIndexArray.length; x++) {
-		// get transfrom in current state
-		currentTransfrom = (x - currentIndexArray[x]) * 100;
-		
-		// get needed transform
-		neededTransfrom = (newIndexArray.indexOf(currentIndexArray[x]) - x) * 100;
-		
-		// calculate final transfrom
-		finalTransfrom = currentTransfrom + neededTransfrom;
-		
-		$("#" + currentIndexArray[x]).css({transform: "translateX(" + finalTransfrom + "%)"});
-		
-	}
-}
-
-function selectBar(barID) {
-	"use strict";
-	$("#" + barID).addClass("bar-selected");
-}
-
-function deselectBar(barID) {
-	"use strict";
-	$("#" + barID).removeClass("bar-selected");
-}
-
-function generateBubbleSort(indexArray) {
-	"use strict";
-	
-	var animations = [];
-	
-	var sortedIndex = indexArray.length;
-	var swappedLastRun = true;
-	while (swappedLastRun === true) {
-		swappedLastRun = false;
-		
-		animations.push({
-			action: "DESELECT",
-			bars: [indexArray[sortedIndex+1]],
-			array: indexArray.slice()
-		});
-		
-		var x = 0;
-		animations.push({
-			action: "SELECT",
-			bars: [indexArray[0]],
-			array: indexArray.slice()
-		});
-		
-		while (x < sortedIndex) {
-			if (indexArray[x] > indexArray[x+1]) {
-				
-				animations.push({
-					action: "SELECT",
-					bars: [indexArray[x+1]],
-					array: indexArray.slice()
-				});
-				
-				animations.push({
-					action: "SWAP",
-					bars: [x, x+1],
-					array: indexArray.slice()
-				});
-				
-				[indexArray[x], indexArray[x+1]] = [indexArray[x+1], indexArray[x]];
-				
-				animations.push({
-					action: "DESELECT",
-					bars: [indexArray[x]],
-					array: indexArray.slice()
-				});
-				
-				swappedLastRun = true;
-			}
-			
-			x++;
-			animations.push({
-				action: "SELECT",
-				bars: [indexArray[x]],
-				array: indexArray.slice()
-			});
-			
-			animations.push({
-				action: "DESELECT",
-				bars: [indexArray[x-1]],
-				array: indexArray.slice()
-			});
-		}
-		sortedIndex--;
-	}
-	animations.push({
-		action: "DESELECT",
-		bars: [indexArray[sortedIndex+1]],
-		array: indexArray.slice()
-	});
-	return animations;
-}
-
-function playAnimation2(animation) {
-	"use strict";
-
-	var i = 0;
-
-	function recursiveAnimationDelayLoop () {
-   		setTimeout(function () {
-			if (animation[i].action === "SELECT") {
-				selectBar(animation[i].bars[0]);
-				console.log("SELECTING: " + animation[i].bars[0]);
-				
-			} else if (animation[i].action === "DESELECT") {
-				console.log("DESELECTING: " + animation[i].bars[0]);
-				deselectBar(animation[i].bars[0]);
-				
-			}
-			else {
-				swapBars(animation[i].bars[0], animation[i].bars[1], animation[i].array);
-				console.log("SWAPPING: " + animation[i].array[animation[i].bars[0]]+ ", " + animation[i].array[animation[i].bars[1]]);
-			}
-			
-			i++;
-			if (i < animation.length) {
-				recursiveAnimationDelayLoop();
-			}
-		}, delay);
-	}
-
-	recursiveAnimationDelayLoop();
-}
-
-function playAnimation(animation, delay) {
-	"use strict";
-	
-	for (let i=0; i<animation.length; i++) {
-        setTimeout( function timer(){
-        	if (animation[i].action === "SELECT") {
-				selectBar(animation[i].bars[0]);
-				console.log("SELECTING: " + animation[i].bars[0]);
-				
-			} else if (animation[i].action === "DESELECT") {
-				console.log("DESELECTING: " + animation[i].bars[0]);
-				deselectBar(animation[i].bars[0]);
-				
-			}
-			else {
-				swapBars(animation[i].bars[0], animation[i].bars[1], animation[i].array);
-				console.log("SWAPPING: " + animation[i].array[animation[i].bars[0]]+ ", " + animation[i].array[animation[i].bars[1]]);
-			}
-    	}, i*delay );
-	}	
-}

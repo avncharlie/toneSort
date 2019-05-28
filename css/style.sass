@@ -13,6 +13,13 @@ $bar-selected-colour: unquote("#7054B2")
 // transition delay for control elements
 $control-transition-delay: 0.15s
 
+// slider
+$thumb-radius: 30px
+$thumb-color: unquote("#88B5F4")
+$track-width: 10px
+$track-color: unquote("#7B68EE")
+
+// general
 *
 	box-sizing: border-box
 
@@ -20,31 +27,46 @@ html, body
 	height: 100%
 	margin: 0px
 
-.bar-selected
-	background-color: $bar-selected-colour !important
+// input slider
+input[type=range]
+	-webkit-appearance: none // hides the slider so that custom slider can be made
+	background: transparent
 
+// remove blue outline on focus
+input[type=range]:focus
+	outline: none
+
+// slider thumb
+input[type=range]::-webkit-slider-thumb
+	-webkit-appearance: none
+	height: $thumb-radius
+	width: $thumb-radius
+	border-radius: 0px
+	background: $thumb-color
+	cursor: pointer
+	margin-top: -1 * ($thumb-radius/2) + $track-width / 2
+
+// slider track
+input[type=range]::-webkit-slider-runnable-track
+	width: 100%
+	height: $track-width
+	cursor: pointer
+	background: $track-color
+	background: linear-gradient(to right, $controls-bottom-gradient, $track-color) 
+	border-radius: 0px
+
+// body
 #container
 	height: 100%
 
 	#output
 		float: left
-		display: flex
-		flex-direction: row
 		width: 80%
 		height: 100%
 		background: linear-gradient(to bottom left, $output-top-right-gradient,$output-bottom-left-gradient)
-
-		.bar
-			width: 100%
-			background-color: white
-			height: 0%
-			align-self: flex-end
-			transition: all 0.3s linear
-			-webkit-backface-visibility: hidden
-			
-			//transform: translate3d(0,0,0)
-			//-webkit-backface-visibility: hidden
-			//-webkit-transform: translateZ(0) scale(1.0, 1.0)
+        
+		#barDisplay
+			display: block
 
 	#controls
 		float: right
@@ -75,27 +97,35 @@ html, body
 				color: $controls-top-gradient
 				background-color: $button-primary-color
 				border-color: $button-primary-color
-	
+
+		.sliderLabel
+			margin-left: 12px
+			margin-top: 15px
+			margin-bottom: 10px
+			text-transform: uppercase
+			font-family: Raleway
+			font-size: .9em
+			color: $button-primary-color
+			font-weight: bold
+
 		.slidecontainer
 			width: calc(100% - 23px)
 			margin: 10px
 
-		.slider
-			width: 100%
-			appearance: none
-			width: 100%
-			height: 25px
-			outline: none
-			opacity: 0.7
-			transition: all $control-transition-delay linear
-			
-			&:hover
-				opacity: 1
+			.slider
+				width: 100%
+				height: 25px
 
-			&::-webkit-slider-thumb
-				appearance: none
-				width: 25px /* Set a specific slider handle width */
-				height: 25px /* Slider handle height */
-				background: #4CAF50 /* Green background */
-				cursor: pointer /* Cursor on hover */
+			#numBarsDisplay
+				font-family: Raleway
+				pointer-events: none
+				color: #fff
+				font-size: .8em
+				position: relative
+				text-align: center
+				width: 30px
+				top: -22px
+				//border-style: solid // for debug
+        
+        
 			

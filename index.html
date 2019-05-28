@@ -12,12 +12,13 @@
   <title>toneSort</title>
 
   <!-- STYLE -->
-  <link rel="stylesheet" href="css/RalewayFont.css">
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/style.css">
   
   <!-- LIBRARIES -->
   <script type="text/javascript" src="js/jquery.min.js" defer></script>
   <script type="text/javascript" src="js/chroma.min.js" defer></script>
+  <script type="text/javascript" src="js/jcanvas.min.js" defer></script>
   
   <!-- MAIN SCRIPT -->
   <script type="text/javascript" src="js/index.js" defer></script>
@@ -25,20 +26,24 @@
 
 <body>
   <div id="container">
-    <div id="output"></div>
+    <div id="output">
+        <canvas id="barDisplay"></canvas>
+    </div>
     
     <div id="controls">
+      <!-- randomise bars -->
   	  <button id="randomise" class="button">randomise</button>
   	  
-  	   <div class="slidecontainer">
-  	     <input type="range" min="3" max="100" value="3" class="slider" id="numBars">
-  	   </div>
+  	  <p class="sliderLabel">bars</p>
+  	  
+  	  <!-- number of bars slider -->
+  	  <div class="slidecontainer">
+        <input style="display: none" type="range" min="3" max="100" value="10" class="slider" id="numBars">
+        <span style="display: none" id="numBarsDisplay">10</span>
+  	  </div>
   	   
-  	    <div class="slidecontainer">
-  	     <input type="range" min="1" max="300" value="15" class="slider" id="delay">
-  	   </div>
-  	   
-  	   <button id="sort" class="button">bubble sort</button>
+  	  <!-- hidden for now -->
+  	  <button id="sort" class="button" style="display: none">bubble sort</button>
   	</div>
   	
   </div>
