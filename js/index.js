@@ -4,6 +4,8 @@
 var startingBars = 10;
 var delay = 1300;
 
+var isPaused = true;
+
 var actualDelay = 2000-delay+100;
 
 var canvasSelector = "#barDisplay";
@@ -106,6 +108,7 @@ function updateDelay(newDelay) {
     
 }
 
+// update delay
 $("#delaySlideContainer").on('input', function(e) {
 	"use strict";
     
@@ -150,7 +153,7 @@ function drawBars(bars, colorGradient, canvas) {
 $(".pausePlayButton").click(function() {
     "use strict";
     $(".pausePlayButton").toggleClass("paused");
-    return false;
+    isPaused = !isPaused;
 });
 
 // init on document load
@@ -171,3 +174,6 @@ $(document).ready(function() {
     initialiseBars();
     
 });
+
+
+// actual sorting

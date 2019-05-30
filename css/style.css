@@ -57,7 +57,7 @@ input[type=range]::-webkit-slider-runnable-track {
       border-style: solid;
       border-width: 3px;
       text-transform: uppercase;
-      transition: all 0.15s linear;
+      transition: all 0.5ms linear;
       cursor: grab; }
       #container #controls .button:focus {
         outline: none; }
@@ -125,5 +125,48 @@ input[type=range]::-webkit-slider-runnable-track {
       border-width: 0px 0 0px 27px; }
     #container .pausePlayButton:hover {
       border-color: transparent transparent transparent #9a8bed; }
+  #container #sortContainer {
+    overflow: hidden;
+    margin: 10px; }
+    #container #sortContainer #selectedSort {
+      font-family: Raleway;
+      background-color: transparent;
+      border: none;
+      padding: 15px 0px;
+      text-align: center;
+      font-size: 1.1em;
+      font-weight: bold;
+      width: 60%;
+      margin: 0 0 0 0;
+      color: #ada1ea;
+      border-style: solid;
+      border-color: #ada1ea;
+      border-width: 3px;
+      text-transform: uppercase;
+      transition: all 0.5ms linear;
+      cursor: grab;
+      float: left; }
+    #container #sortContainer #goButton {
+      background-color: #ada1ea;
+      border-color: #ada1ea;
+      font-family: Raleway;
+      border: none;
+      padding: 11px 0px;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      width: 35%;
+      margin: 0 0 0 0;
+      color: #fff;
+      border-style: solid;
+      border-color: #ada1ea;
+      border-width: 3px;
+      text-transform: uppercase;
+      transition: all 0.5ms linear;
+      cursor: grab;
+      float: right; }
+      #container #sortContainer #goButton:hover {
+        background-color: #9a8bed;
+        border-color: #9a8bed; }
 
 /*# sourceMappingURL=style.css.map */

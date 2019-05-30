@@ -11,7 +11,7 @@ $output-bottom-left-gradient: unquote("#FFECA8C9")
 $bar-selected-colour: unquote("#7054B2")
 
 // transition delay for control elements
-$control-transition-delay: 0.15s
+$control-transition-delay: 0.50ms
 
 // slider
 $thumb-radius: 30px
@@ -147,7 +147,6 @@ input[type=range]::-webkit-slider-runnable-track
 	.playback
 		margin: 10px
 		overflow: hidden
-		//border-style: solid
 
 	.pausePlayButton
 		height: $thumb-radius
@@ -175,4 +174,51 @@ input[type=range]::-webkit-slider-runnable-track
 
 		&:hover
 			border-color: transparent transparent transparent #9a8bed
-			
+
+	#sortContainer
+		//border-style: solid
+		overflow: hidden
+		margin: 10px
+
+		#selectedSort
+			font-family: Raleway
+			background-color: transparent
+			border: none
+			padding: 15px 0px
+			text-align: center
+			font-size: 1.1em
+			font-weight: bold
+			width: 60%
+			margin: 0 0 0 0
+			color: #ada1ea
+			border-style: solid
+			border-color: #ada1ea
+			border-width: 3px
+			text-transform: uppercase
+			transition: all $control-transition-delay linear
+			cursor: grab
+			float: left
+
+		#goButton
+			background-color: #ada1ea
+			border-color: #ada1ea
+			font-family: Raleway
+			border: none
+			padding: 11px 0px
+			text-align: center
+			font-size: 1.5em
+			font-weight: bold
+			width: 35%
+			margin: 0 0 0 0
+			color: #fff
+			border-style: solid
+			border-color: #ada1ea
+			border-width: 3px
+			text-transform: uppercase
+			transition: all $control-transition-delay linear
+			cursor: grab
+			float: right
+
+			&:hover
+				background-color: #9a8bed
+				border-color: #9a8bed
