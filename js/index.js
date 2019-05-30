@@ -2,6 +2,9 @@
 
 // once set here, will update through interface
 var startingBars = 10;
+var delay = 1300;
+
+var actualDelay = 2000-delay;
 
 var canvasSelector = "#barDisplay";
 var canvasParentSelector = "#output";
@@ -22,6 +25,29 @@ $("#randomise").click(function() {
     // draw
     drawBars(bars, colourGradient, canvas);
 });
+
+// redraw on resize
+$(window).resize(function(){
+    "use strict";
+    // redraw canvas
+    var canvas = $(canvasSelector);
+    canvas.clearCanvas();
+    initialiseBars();
+});
+
+// initialise display
+function initialiseBars() {
+    "use strict";
+    var canvas = $(canvasSelector), 
+        ctx = canvas[0].getContext('2d');
+    
+    // set width and height of canvas to parent width and height
+    ctx.canvas.height = $(canvasParentSelector).innerHeight();
+    ctx.canvas.width = $(canvasParentSelector).innerWidth();
+    
+    // draw bars after initialisation
+    drawBars(bars, colourGradient, canvas);
+}
 
 // update the number of bars slider and all its related components
 // ensures it is visible
@@ -50,6 +76,43 @@ $("#numBars").on('input', function(e) {
     canvas.clearCanvas();
     // draw
     drawBars(bars, colourGradient, canvas);
+});
+
+// updates delay slider
+function updateDelay(newDelay) {
+    "use strict";
+    $("#delay").val(newDelay);
+    var convertedPercentage = ((newDelay-100)/1900)*100; //((newDelay-3)/97)*100;
+    var offset = 2;
+    $("#delayDisplay").css('left', 'calc(' + convertedPercentage + '% - ' + (30*convertedPercentage/100 - offset) +'px)');
+    $("#delay").css('display', 'block');
+    $("#delayDisplay").css('display', 'block');
+    //var secondDisplay = Math.round( (newDelay/1000) * 10) / 10 + "s";
+    //$("#delayDisplay").text("5");
+    
+    if (convertedPercentage > 75) {
+        $("#delayIcon").removeClass("fa-angle-double-right");
+        $("#delayIcon").addClass("fa-fighter-jet");
+    } else if (convertedPercentage > 50) {
+        $("#delayIcon").removeClass("fa-fighter-jet fa-angle-right");
+        $("#delayIcon").addClass("fa-angle-double-right");
+    } else if (convertedPercentage > 25) {
+        $("#delayIcon").removeClass("fa-angle-double-right fa-walking");
+        $("#delayIcon").addClass("fa-angle-right");
+    } else {
+        $("#delayIcon").removeClass("fa-angle-right");
+        $("#delayIcon").addClass("fa-walking");
+    }
+    
+}
+
+$("#delaySlideContainer").on('input', function(e) {
+	"use strict";
+    
+    var newDelay = $(e.target).val();
+    updateDelay(newDelay);
+    delay = newDelay;
+    actualDelay = 2000-newDelay;
 });
 
 // helper to shuffle array
@@ -99,6 +162,13 @@ function drawBars(bars, colorGradient, canvas) {
     }
 }
 
+// toggle play pause button
+$(".pausePlayButton").click(function() {
+    "use strict";
+    $(".pausePlayButton").toggleClass("paused");
+    return false;
+});
+
 // init on document load
 $(document).ready(function() {
 	"use strict";
@@ -106,13 +176,14 @@ $(document).ready(function() {
     // initialise numBars slider to whatever it is
     updateNumBars(startingBars);
     
-    var canvas = $(canvasSelector), 
-        ctx = canvas[0].getContext('2d');
+    // update delay slider
+    updateDelay(delay);
     
-    // set width and height of canvas to parent width and height
-    ctx.canvas.height = $(canvasParentSelector).innerHeight();
-    ctx.canvas.width = $(canvasParentSelector).innerWidth();
+    // redraw canvas
+    var canvas = $(canvasSelector);
+    canvas.clearCanvas();
     
-    // draw bars after initialisation
-    drawBars(bars, colourGradient, canvas);
+    // draw actual display
+    initialiseBars();
+    
 });

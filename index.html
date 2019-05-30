@@ -14,6 +14,7 @@
   <!-- STYLE -->
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
   
   <!-- LIBRARIES -->
   <script type="text/javascript" src="js/jquery.min.js" defer></script>
@@ -40,6 +41,16 @@
   	  <div class="slidecontainer">
         <input style="display: none" type="range" min="3" max="100" value="10" class="slider" id="numBars">
         <span style="display: none" id="numBarsDisplay">10</span>
+  	  </div>
+  	  
+  	  <p class="sliderLabel">playback</p>
+  	  
+  	  <div class="playback">
+        <div class="pausePlayButton"></div>
+        <div class="slidecontainer" id="delaySlideContainer">
+          <input style="display: none" type="range" min="100" max="2000" value="10" class="slider" id="delay">
+          <span style="display: none" id="delayDisplay"><i id="delayIcon" class="fas fa-angle-right"></i></span>
+  	    </div>
   	  </div>
   	   
   	  <!-- hidden for now -->

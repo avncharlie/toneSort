@@ -89,6 +89,7 @@ input[type=range]::-webkit-slider-runnable-track
 			border-width: 3px
 			text-transform: uppercase
 			transition: all $control-transition-delay linear
+			cursor: grab
 			
 			&:focus
 				outline: none
@@ -111,10 +112,11 @@ input[type=range]::-webkit-slider-runnable-track
 		.slidecontainer
 			width: calc(100% - 23px)
 			margin: 10px
-
+			
 			.slider
 				width: 100%
 				height: 25px
+				
 
 			#numBarsDisplay
 				font-family: Raleway
@@ -126,6 +128,51 @@ input[type=range]::-webkit-slider-runnable-track
 				width: 30px
 				top: -22px
 				//border-style: solid // for debug
-        
-        
+    
+		#delaySlideContainer
+			width: calc(84%)
+			margin: 0 0 0 0
+			float: right
+			
+			#delayDisplay
+				font-family: Raleway
+				pointer-events: none
+				color: #fff
+				font-size: .8em
+				position: relative
+				text-align: center
+				width: 30px
+				top: -22px
+    
+	.playback
+		margin: 10px
+		overflow: hidden
+		//border-style: solid
+
+	.pausePlayButton
+		height: $thumb-radius
+		background: $button-primary-color
+		margin: 0 0 0 0
+		margin-left: 3px
+		float: left
+		text-align: center
+
+		background: transparent
+		box-sizing: border-box
+		width: 0
+
+		border-color: transparent transparent transparent #ada1ea
+		transition: 50ms all ease
+		cursor: pointer
+
+		// play state
+		border-style: solid
+		border-width: $thumb-radius/2 0 $thumb-radius/2 $thumb-radius*0.9
+
+		&.paused
+			border-style: double
+			border-width: 0px 0 0px $thumb-radius*0.9
+
+		&:hover
+			border-color: transparent transparent transparent #9a8bed
 			

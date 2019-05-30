@@ -57,7 +57,8 @@ input[type=range]::-webkit-slider-runnable-track {
       border-style: solid;
       border-width: 3px;
       text-transform: uppercase;
-      transition: all 0.15s linear; }
+      transition: all 0.15s linear;
+      cursor: grab; }
       #container #controls .button:focus {
         outline: none; }
       #container #controls .button:hover {
@@ -88,5 +89,41 @@ input[type=range]::-webkit-slider-runnable-track {
         text-align: center;
         width: 30px;
         top: -22px; }
+    #container #controls #delaySlideContainer {
+      width: calc(84%);
+      margin: 0 0 0 0;
+      float: right; }
+      #container #controls #delaySlideContainer #delayDisplay {
+        font-family: Raleway;
+        pointer-events: none;
+        color: #fff;
+        font-size: 0.8em;
+        position: relative;
+        text-align: center;
+        width: 30px;
+        top: -22px; }
+  #container .playback {
+    margin: 10px;
+    overflow: hidden; }
+  #container .pausePlayButton {
+    height: 30px;
+    background: #88B5F4;
+    margin: 0 0 0 0;
+    margin-left: 3px;
+    float: left;
+    text-align: center;
+    background: transparent;
+    box-sizing: border-box;
+    width: 0;
+    border-color: transparent transparent transparent #ada1ea;
+    transition: 50ms all ease;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 15px 0 15px 27px; }
+    #container .pausePlayButton.paused {
+      border-style: double;
+      border-width: 0px 0 0px 27px; }
+    #container .pausePlayButton:hover {
+      border-color: transparent transparent transparent #9a8bed; }
 
 /*# sourceMappingURL=style.css.map */
