@@ -4,7 +4,7 @@
 var startingBars = 10;
 var delay = 1300;
 
-var actualDelay = 2000-delay;
+var actualDelay = 2000-delay+100;
 
 var canvasSelector = "#barDisplay";
 var canvasParentSelector = "#output";
@@ -90,13 +90,13 @@ function updateDelay(newDelay) {
     //var secondDisplay = Math.round( (newDelay/1000) * 10) / 10 + "s";
     //$("#delayDisplay").text("5");
     
-    if (convertedPercentage > 75) {
+    if (convertedPercentage > 80) {
         $("#delayIcon").removeClass("fa-angle-double-right");
         $("#delayIcon").addClass("fa-fighter-jet");
     } else if (convertedPercentage > 50) {
         $("#delayIcon").removeClass("fa-fighter-jet fa-angle-right");
         $("#delayIcon").addClass("fa-angle-double-right");
-    } else if (convertedPercentage > 25) {
+    } else if (convertedPercentage > 20) {
         $("#delayIcon").removeClass("fa-angle-double-right fa-walking");
         $("#delayIcon").addClass("fa-angle-right");
     } else {
@@ -112,29 +112,13 @@ $("#delaySlideContainer").on('input', function(e) {
     var newDelay = $(e.target).val();
     updateDelay(newDelay);
     delay = newDelay;
-    actualDelay = 2000-newDelay;
+    actualDelay = 2000 - newDelay + 100;
+    console.log(actualDelay);
 });
 
 // helper to shuffle array
 function shuffleArray(array) {
 	"use strict";
-	
-	var currentIndex = array.length, temporaryValue, randomIndex;
-
-	// While there remain elements to shuffle...
-	while (0 !== currentIndex) {
-
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex -= 1;
-
-		// And swap it with the current element.
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-    	array[randomIndex] = temporaryValue;
-	}
-
-	return array;
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
