@@ -144,7 +144,7 @@ input[type=range]::-webkit-slider-runnable-track {
       transition: all 70ms linear; }
       #container #sortContainer #dropdownContainer p {
         font-family: Raleway;
-        padding: 14px 17px;
+        padding: 14px 14.5px;
         margin: 0px;
         text-decoration: none;
         display: block;

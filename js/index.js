@@ -1,17 +1,24 @@
 /*jshint esversion: 6 */
 
 // init sorts
-function bubbleSortGenerator() {
-}
+function bubbleSortGenerator() {}
+function selectionSortGenerator() {}
+function insertionSortGenerator() {}
 
 var sorts = {
     bubbleSort: {
         displayName: "bubble sort",
         generator: bubbleSortGenerator
+    },
+    selectionSort: {
+        displayName: "selection sort",
+        generator: selectionSortGenerator
+    },
+    insertionSort: {
+        displayName: "insertion sort",
+        generator: insertionSortGenerator
     }
 };
-
-sorts.bubbleSort.generator();
 
 // once set here, will update through interface
 var startingBars = 10;
@@ -168,6 +175,25 @@ $(".pausePlayButton").click(function() {
     "use strict";
     $(".pausePlayButton").toggleClass("paused");
     isPaused = !isPaused;
+});
+
+// update sort type
+$("#dropdownContainer>p").click(function (event) {
+    "use strict";
+    var newSelectedSort = $(event.target).text();
+    // set current sort to new sort
+    Object.keys(sorts).forEach(function(key,index) {
+        if (sorts[key].displayName === newSelectedSort) {
+            selectedSort = sorts[key];
+            $(".selectedSortText").text(selectedSort.displayName);
+        }
+    });
+});
+
+$("#goButton").click(function () {
+    "use strict";
+    $(".pausePlayButton").addClass("paused");
+    isPaused = false;
 });
 
 // init on document load
