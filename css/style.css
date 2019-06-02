@@ -153,7 +153,8 @@ input[type=range]::-webkit-slider-runnable-track {
         color: #ada1ea;
         font-weight: bold;
         transition: all 50ms linear;
-        cursor: grab; }
+        cursor: grab;
+        user-select: none; }
         #container #sortContainer #dropdownContainer p:hover {
           background-color: #ada1ea;
           color: #fff; }
@@ -174,7 +175,8 @@ input[type=range]::-webkit-slider-runnable-track {
       text-transform: uppercase;
       transition: all 0.1s linear;
       cursor: grab;
-      float: left; }
+      float: left;
+      user-select: none; }
     #container #sortContainer #goButton {
       background-color: #ada1ea;
       border-color: #ada1ea;
@@ -193,7 +195,8 @@ input[type=range]::-webkit-slider-runnable-track {
       text-transform: uppercase;
       transition: all 0.1s linear;
       cursor: grab;
-      float: right; }
+      float: right;
+      user-select: none; }
       #container #sortContainer #goButton:hover {
         background-color: #9a8bed;
         border-color: #9a8bed; }
