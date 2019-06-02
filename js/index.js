@@ -1,8 +1,22 @@
 /*jshint esversion: 6 */
 
+// init sorts
+function bubbleSortGenerator() {
+}
+
+var sorts = {
+    bubbleSort: {
+        displayName: "bubble sort",
+        generator: bubbleSortGenerator
+    }
+};
+
+sorts.bubbleSort.generator();
+
 // once set here, will update through interface
 var startingBars = 10;
 var delay = 1300;
+var selectedSort = sorts.bubbleSort;
 
 var isPaused = true;
 
@@ -160,11 +174,14 @@ $(".pausePlayButton").click(function() {
 $(document).ready(function() {
 	"use strict";
     
-    // initialise numBars slider to whatever it is
+    // update numBars slider
     updateNumBars(startingBars);
     
     // update delay slider
     updateDelay(delay);
+    
+    // update selected sort
+    $(".selectedSortText").text(selectedSort.displayName);
     
     // redraw canvas
     var canvas = $(canvasSelector);

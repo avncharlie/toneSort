@@ -11,7 +11,7 @@ $output-bottom-left-gradient: unquote("#FFECA8C9")
 $bar-selected-colour: unquote("#7054B2")
 
 // transition delay for control elements
-$control-transition-delay: 0.50ms
+$control-transition-delay: 0.1s
 
 // slider
 $thumb-radius: 30px
@@ -180,13 +180,47 @@ input[type=range]::-webkit-slider-runnable-track
 		overflow: hidden
 		margin: 10px
 
+		#dropdown
+			&:hover #dropdownContainer
+				opacity: 1
+
+		#dropdownContainer
+			opacity: 0
+			background-color: #f9f9f9
+			position: absolute
+			border-style: solid
+			border-color: #ada1ea
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2)
+			z-index: 1
+			margin-top: 54px
+			max-height: 250px
+			overflow: auto
+			transition: all 70ms linear
+
+			p
+				font-family: Raleway
+				padding: 14px 17px
+				margin: 0px
+				text-decoration: none
+				display: block
+				text-transform: uppercase
+				font-size: 0.8em
+				color: #ada1ea
+				font-weight: bold
+				transition: all 50ms linear
+				cursor: grab
+    
+				&:hover
+					background-color: #ada1ea
+					color: #fff
+
 		#selectedSort
 			font-family: Raleway
 			background-color: transparent
 			border: none
-			padding: 15px 0px
+			padding: 17px 0px
 			text-align: center
-			font-size: 1.1em
+			font-size: 0.9em
 			font-weight: bold
 			width: 60%
 			margin: 0 0 0 0

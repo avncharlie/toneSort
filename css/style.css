@@ -57,7 +57,7 @@ input[type=range]::-webkit-slider-runnable-track {
       border-style: solid;
       border-width: 3px;
       text-transform: uppercase;
-      transition: all 0.5ms linear;
+      transition: all 0.1s linear;
       cursor: grab; }
       #container #controls .button:focus {
         outline: none; }
@@ -128,13 +128,42 @@ input[type=range]::-webkit-slider-runnable-track {
   #container #sortContainer {
     overflow: hidden;
     margin: 10px; }
+    #container #sortContainer #dropdown:hover #dropdownContainer {
+      opacity: 1; }
+    #container #sortContainer #dropdownContainer {
+      opacity: 0;
+      background-color: #f9f9f9;
+      position: absolute;
+      border-style: solid;
+      border-color: #ada1ea;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      margin-top: 54px;
+      max-height: 250px;
+      overflow: auto;
+      transition: all 70ms linear; }
+      #container #sortContainer #dropdownContainer p {
+        font-family: Raleway;
+        padding: 14px 17px;
+        margin: 0px;
+        text-decoration: none;
+        display: block;
+        text-transform: uppercase;
+        font-size: 0.8em;
+        color: #ada1ea;
+        font-weight: bold;
+        transition: all 50ms linear;
+        cursor: grab; }
+        #container #sortContainer #dropdownContainer p:hover {
+          background-color: #ada1ea;
+          color: #fff; }
     #container #sortContainer #selectedSort {
       font-family: Raleway;
       background-color: transparent;
       border: none;
-      padding: 15px 0px;
+      padding: 17px 0px;
       text-align: center;
-      font-size: 1.1em;
+      font-size: 0.9em;
       font-weight: bold;
       width: 60%;
       margin: 0 0 0 0;
@@ -143,7 +172,7 @@ input[type=range]::-webkit-slider-runnable-track {
       border-color: #ada1ea;
       border-width: 3px;
       text-transform: uppercase;
-      transition: all 0.5ms linear;
+      transition: all 0.1s linear;
       cursor: grab;
       float: left; }
     #container #sortContainer #goButton {
@@ -162,7 +191,7 @@ input[type=range]::-webkit-slider-runnable-track {
       border-color: #ada1ea;
       border-width: 3px;
       text-transform: uppercase;
-      transition: all 0.5ms linear;
+      transition: all 0.1s linear;
       cursor: grab;
       float: right; }
       #container #sortContainer #goButton:hover {
