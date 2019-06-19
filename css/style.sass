@@ -109,6 +109,23 @@ input[type=range]::-webkit-slider-runnable-track
 			color: $button-primary-color
 			font-weight: bold
 
+		#stats
+			margin-top: 25px
+
+		#statContainer>p
+			margin: 0px
+			margin-left: 12px
+			margin-top: 12px
+			text-transform: uppercase
+			font-family: Raleway
+			font-size: .8em
+			color: unquote("#7B68EE")
+			font-weight: bold
+
+			span
+				color: unquote("#000")
+				margin-left: 4px
+
 		.slidecontainer
 			width: calc(100% - 23px)
 			margin: 10px
@@ -183,9 +200,11 @@ input[type=range]::-webkit-slider-runnable-track
 		#dropdown
 			&:hover #dropdownContainer
 				opacity: 1
+				display: block
     
 		#dropdownContainer
 			opacity: 0
+			display: none
 			background-color: #f9f9f9
 			position: absolute
 			border-style: solid

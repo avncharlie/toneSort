@@ -74,6 +74,20 @@ input[type=range]::-webkit-slider-runnable-track {
       font-size: 0.9em;
       color: #88B5F4;
       font-weight: bold; }
+    #container #controls #stats {
+      margin-top: 25px; }
+    #container #controls #statContainer > p {
+      margin: 0px;
+      margin-left: 12px;
+      margin-top: 12px;
+      text-transform: uppercase;
+      font-family: Raleway;
+      font-size: 0.8em;
+      color: #7B68EE;
+      font-weight: bold; }
+      #container #controls #statContainer > p span {
+        color: #000;
+        margin-left: 4px; }
     #container #controls .slidecontainer {
       width: calc(100% - 23px);
       margin: 10px; }
@@ -129,9 +143,11 @@ input[type=range]::-webkit-slider-runnable-track {
     overflow: hidden;
     margin: 10px; }
     #container #sortContainer #dropdown:hover #dropdownContainer {
-      opacity: 1; }
+      opacity: 1;
+      display: block; }
     #container #sortContainer #dropdownContainer {
       opacity: 0;
+      display: none;
       background-color: #f9f9f9;
       position: absolute;
       border-style: solid;
