@@ -141,7 +141,52 @@ function selectionSortGenerator(bars) {
     
     return instructions;
 }
-function insertionSortGenerator() {}
+function insertionSortGenerator(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    var instructions = [];
+    
+    for (var x = 1; x < newBars.length; x++) {
+        
+        instructions.push({type: "SELECT", index: x});
+        
+        var searchIndex = x - 1;
+        var currentlyMoving = x;
+        
+        
+        while (searchIndex >= 0 && newBars[currentlyMoving] < newBars[searchIndex]) {
+            // one comparison checking if newBars[currentlyMoving] < newBars[searchIndex]
+            instructions.push({type: "INCREMENT", counter: "comparisons"});
+            
+            // accesses for newBars[currentlyMoving] and newBars[searchIndex]
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            
+            instructions.push({type: "SELECT", index: searchIndex});
+            
+            var temp = newBars[currentlyMoving];
+            newBars[currentlyMoving] = newBars[searchIndex];
+            newBars[searchIndex] = temp;
+            
+            
+            instructions.push({type: "SWAP", indexes: [searchIndex, currentlyMoving]});
+            // two array accesses for the swap
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "DESELECT", index: searchIndex});
+            instructions.push({type: "DESELECT", index: currentlyMoving});
+            
+            currentlyMoving = searchIndex;
+            searchIndex -= 1;
+            
+        }
+        instructions.push({type: "DESELECT", index: x});
+    }
+    instructions.push({type: "DESELECT", index: x});
+    return instructions;
+}
 
 var sorts = {
     bubbleSort: {
