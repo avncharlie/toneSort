@@ -10,7 +10,7 @@ var counters = {
     comparisons: 0
 };
 
-var frequencyVals = [440, 900];
+// var frequencyVals = [440, 900];
 
 var isPaused = true;
 
@@ -26,19 +26,19 @@ var selectedColour = "#7054B2";
 // start off with 10 bars
 var bars = [...Array(startingBars).keys()];
 
-// init sound
-var context = new AudioContext()
-var o = context.createOscillator();
-o.frequency.value = 440;
-o.type = "triangle";
-var g = context.createGain();
-g.gain.setValueAtTime(0.20, context.currentTime);
-o.connect(g);
-g.connect(context.destination);
-if (context.resume) {
-    context.resume();
-}
-o.start(0);
+// init sound - doesn't work :( 
+//var context = new AudioContext()
+//var o = context.createOscillator();
+//o.frequency.value = 440;
+//o.type = "triangle";
+//var g = context.createGain();
+//g.gain.setValueAtTime(0.20, context.currentTime);
+//o.connect(g);
+//g.connect(context.destination);
+//if (context.resume) {
+//    context.resume();
+//}
+//o.start(0);
 
 // init sorts
 function bubbleSortGenerator(bars) {
@@ -188,6 +188,7 @@ function insertionSortGenerator(bars) {
     return instructions;
 }
 
+// global object storing all sort generators
 var sorts = {
     bubbleSort: {
         displayName: "bubble sort",
@@ -447,19 +448,21 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function playTone(frequency, seconds) {
-    "use strict";
-    if (context.resume) {
-        context.resume();
-    }
-    o.frequency.linearRampToValueAtTime(frequency, context.currentTime);
-    g.gain.cancelScheduledValues(context.currentTime);
-    g.gain.linearRampToValueAtTime(1, context.currentTime);
-    g.gain.linearRampToValueAtTime(
-        0, context.currentTime + seconds
-    );
-}
+// doesn't work
+//function playTone(frequency, seconds) {
+//    "use strict";
+//    if (context.resume) {
+//        context.resume();
+//    }
+//    o.frequency.linearRampToValueAtTime(frequency, context.currentTime);
+//    g.gain.cancelScheduledValues(context.currentTime);
+//    g.gain.linearRampToValueAtTime(1, context.currentTime);
+//    g.gain.linearRampToValueAtTime(
+//        0, context.currentTime + seconds
+//    );
+//}
 
+// updates the counters based on the global counters object
 function updateCounters() {
     "use strict";
     Object.keys(counters).forEach(function(key,index) {
@@ -467,6 +470,7 @@ function updateCounters() {
     });
 }
 
+// play the generated sort instructions
 async function playSortInstructions(instructions) {
     "use strict";
     var instruction;
@@ -483,7 +487,7 @@ async function playSortInstructions(instructions) {
         if (instruction.type === "SELECT") {
             
             
-            playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ), actualDelay/1000);
+            //playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ), actualDelay/1000);
             
             
             $(canvasSelector).animateLayer("#" + bars[instruction.index], {
