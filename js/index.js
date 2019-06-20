@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 
+// FRAME SKIP
+
 // once set here, will update through interface
 var startingBars = 10;
 var delay = 500;
@@ -7,6 +9,8 @@ var counters = {
     steps: 0,
     comparisons: 0
 };
+
+var frequencyVals = [440, 900];
 
 var isPaused = true;
 
@@ -31,6 +35,9 @@ var g = context.createGain();
 g.gain.setValueAtTime(0.20, context.currentTime);
 o.connect(g);
 g.connect(context.destination);
+if (context.resume) {
+    context.resume();
+}
 o.start(0);
 
 // init sorts
@@ -84,7 +91,44 @@ function bubbleSortGenerator(bars) {
     }
     return instructions;
 }
-function selectionSortGenerator() {}
+function selectionSortGenerator(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    var instructions = [];
+    
+    for (var outsideIndex = 0; outsideIndex < newBars.length; outsideIndex++) {
+        var minIndex = outsideIndex;
+        
+        instructions.push({type: "SELECT", index: minIndex});
+        
+        for (var insideIndex = outsideIndex + 1; insideIndex < newBars.length; insideIndex++) {
+            
+            instructions.push({type: "SELECT", index: insideIndex});
+            
+            if (newBars[insideIndex] < newBars[minIndex]) {
+                if (minIndex !== outsideIndex) {
+                    instructions.push({type: "DESELECT", index: minIndex});
+                }
+                minIndex = insideIndex;
+            } else {
+                instructions.push({type: "DESELECT", index: insideIndex});
+            }
+        }
+        
+        // swap first in loop with minimum
+        var temp = newBars[outsideIndex];
+        newBars[outsideIndex] = newBars[minIndex];
+        newBars[minIndex] = temp;
+        
+        instructions.push({type: "SWAP", indexes: [outsideIndex, minIndex]});
+        instructions.push({type: "DESELECT", index: outsideIndex});
+        instructions.push({type: "DESELECT", index: minIndex});
+    }
+    
+    return instructions;
+}
 function insertionSortGenerator() {}
 
 var sorts = {
@@ -363,7 +407,6 @@ function updateCounters() {
     "use strict";
     Object.keys(counters).forEach(function(key,index) {
         $("#" + key).text(counters[key]);
-        console.log(counters);
     });
 }
 
@@ -383,7 +426,7 @@ async function playSortInstructions(instructions) {
         if (instruction.type === "SELECT") {
             
             
-            playTone(900, actualDelay/1000);
+            playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ), actualDelay/1000);
             
             
             $(canvasSelector).animateLayer("#" + bars[instruction.index], {
