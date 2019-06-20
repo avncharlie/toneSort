@@ -107,6 +107,13 @@ function selectionSortGenerator(bars) {
             
             instructions.push({type: "SELECT", index: insideIndex});
             
+            // one comparison for checking if current < minIndex
+            instructions.push({type: "INCREMENT", counter: "comparisons"});
+            
+            // one access in accessing insideIndex and another for minIndex
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            
             if (newBars[insideIndex] < newBars[minIndex]) {
                 if (minIndex !== outsideIndex) {
                     instructions.push({type: "DESELECT", index: minIndex});
@@ -123,6 +130,11 @@ function selectionSortGenerator(bars) {
         newBars[minIndex] = temp;
         
         instructions.push({type: "SWAP", indexes: [outsideIndex, minIndex]});
+        
+        // two accesses for swapping
+        instructions.push({type: "INCREMENT", counter: "steps"});
+        instructions.push({type: "INCREMENT", counter: "steps"}); 
+        
         instructions.push({type: "DESELECT", index: outsideIndex});
         instructions.push({type: "DESELECT", index: minIndex});
     }
