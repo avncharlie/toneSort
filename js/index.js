@@ -451,9 +451,25 @@ $("#dropdownContainer>p").click(function (event) {
     });
 });
 
-// play button
-$("#goButton").click(function () {
+// wait for animation to stop
+function waitForAnimationToStop() {
     "use strict";
+    return new Promise(function(resolve) {
+        if (finishedAnimation) {
+            resolve();
+        }
+    });
+}
+
+// async as it waits for the promise returned by waitForAnimationToStop to resolve
+async function goButton() {
+    "use strict";
+    
+    if (!finishedAnimation) {
+        console.log("uh oh");
+        await waitForAnimationToStop();
+    }
+    
     $(".pausePlayButton").addClass("paused");
     isPaused = false;
     counters = {
@@ -462,6 +478,12 @@ $("#goButton").click(function () {
     };
     updateCounters();
     displaySort();
+}
+
+// play button (offloads to goButton() as it has to be async)
+$("#goButton").click(function () {
+    "use strict";
+    goButton();
 });
 
 // init on document load
