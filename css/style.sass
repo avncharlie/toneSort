@@ -160,10 +160,48 @@ input[type=range]::-webkit-slider-runnable-track
 				text-align: center
 				width: 30px
 				top: -22px
+
+		#volumeSlideContainer
+			width: calc(84%)
+			margin: 0 0 0 0
+			float: right
+			
+			#volumeDisplay
+				font-family: Raleway
+				pointer-events: none
+				color: #fff
+				font-size: .8em
+				position: relative
+				text-align: center
+				width: 30px
+				top: -22px
     
 	.playback
 		margin: 10px
 		overflow: hidden
+
+	.volumeButton
+		font-size: 1.3em
+		height: $thumb-radius
+		background: #fff
+		margin: 0 0 0 0
+		margin-left: 1px
+		float: left
+		text-align: center
+
+		background: transparent
+		box-sizing: border-box
+		width: 0
+
+		border-color: transparent transparent transparent #ada1ea
+		transition: 50ms all ease
+		cursor: pointer
+
+		#volumeIcon
+			margin: 0 0 0 0
+			padding: 5px 5px 5px 5px
+			//background-color: #ada1ea
+			color:  #ada1ea
 
 	.pausePlayButton
 		height: $thumb-radius

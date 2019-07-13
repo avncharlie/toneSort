@@ -116,9 +116,40 @@ input[type=range]::-webkit-slider-runnable-track {
         text-align: center;
         width: 30px;
         top: -22px; }
+    #container #controls #volumeSlideContainer {
+      width: calc(84%);
+      margin: 0 0 0 0;
+      float: right; }
+      #container #controls #volumeSlideContainer #volumeDisplay {
+        font-family: Raleway;
+        pointer-events: none;
+        color: #fff;
+        font-size: 0.8em;
+        position: relative;
+        text-align: center;
+        width: 30px;
+        top: -22px; }
   #container .playback {
     margin: 10px;
     overflow: hidden; }
+  #container .volumeButton {
+    font-size: 1.3em;
+    height: 30px;
+    background: #fff;
+    margin: 0 0 0 0;
+    margin-left: 1px;
+    float: left;
+    text-align: center;
+    background: transparent;
+    box-sizing: border-box;
+    width: 0;
+    border-color: transparent transparent transparent #ada1ea;
+    transition: 50ms all ease;
+    cursor: pointer; }
+    #container .volumeButton #volumeIcon {
+      margin: 0 0 0 0;
+      padding: 5px 5px 5px 5px;
+      color: #ada1ea; }
   #container .pausePlayButton {
     height: 30px;
     background: #88B5F4;

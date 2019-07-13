@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 
 // FRAME SKIP
+// FIX SOUND
 
 // once set here, will update through interface
 var startingBars = 10;
@@ -9,9 +10,14 @@ var counters = {
     steps: 0,
     comparisons: 0
 };
+var gainPercentage = 0.8;
 
-// var frequencyVals = [440, 900];
+var frequencyVals = [300, 800];
+var gainRange = [0, 1];
 
+var isMuted = false;
+
+var finishedAnimation = true;
 var isPaused = true;
 
 var actualDelay = 700-delay+1;
@@ -26,19 +32,18 @@ var selectedColour = "#7054B2";
 // start off with 10 bars
 var bars = [...Array(startingBars).keys()];
 
-// init sound - doesn't work :( 
-//var context = new AudioContext()
-//var o = context.createOscillator();
-//o.frequency.value = 440;
-//o.type = "triangle";
-//var g = context.createGain();
-//g.gain.setValueAtTime(0.20, context.currentTime);
-//o.connect(g);
-//g.connect(context.destination);
-//if (context.resume) {
-//    context.resume();
-//}
-//o.start(0);
+// init sound
+var audioCtx = new (window.AudioContext || window.webkitAudioContext);
+
+var volume = audioCtx.createGain();
+volume.connect(audioCtx.destination);
+       
+var tone = audioCtx.createOscillator();
+tone.frequency.value = frequencyVals[0];
+tone.type = "triangle";
+tone.start();
+tone.connect(volume);
+setGain(0, 0.0000001);
 
 // init sorts
 function bubbleSortGenerator(bars) {
@@ -207,6 +212,7 @@ var sorts = {
 // reset stuff
 function pauseAndReset() {
     "use strict";
+    setGain(0, actualDelay/1000);
     isPaused = true;
     $(".pausePlayButton").removeClass("paused");
     counters = {
@@ -244,6 +250,23 @@ $("#randomise").click(function() {
     clearCanvas();
     // draw
     drawBars(bars, colourGradient, canvas);
+});
+
+// volume button
+$(".volumeButton").click(function() {
+    "use strict";
+    if (!isMuted) {
+        setGain(0, 0.0000001);
+        isMuted = true;
+        $("#volumeIcon").removeClass("fa-volume-up");
+        $("#volumeIcon").addClass("fa-volume-mute");
+
+    } else {
+        setGain(gainPercentage, 0.01);
+        isMuted = false;
+        $("#volumeIcon").removeClass("fa-volume-mute");
+        $("#volumeIcon").addClass("fa-volume-up");
+    }
 });
 
 // redraw on resize
@@ -337,6 +360,36 @@ $("#delaySlideContainer").on('input', function(e) {
     actualDelay = 700 - newDelay + 1;
 });
 
+function updateVolume(newVolume) {
+    "use strict";
+    $("#volume").val(newVolume);
+    $("#volume").css('display', 'block');
+    
+    var convertedPercentage = newVolume;
+    var offset = 2;
+    
+    $("#volumeDisplay").css('left', 'calc(' + convertedPercentage + '% - ' + (30*convertedPercentage/100 - offset) +'px)');
+    
+    $("#volumeDisplay").css('display', 'block');
+    
+    $("#volumeDisplay").text(parseInt(newVolume));
+}
+
+// change gain
+$("#volume").on('input', function(e) {
+	"use strict";
+    if (isMuted) {
+        isMuted = false;
+        $("#volumeIcon").removeClass("fa-volume-mute");
+        $("#volumeIcon").addClass("fa-volume-up");
+    }
+    gainPercentage = $(e.target).val()/100;
+    updateVolume(gainPercentage*100);
+    if (!finishedAnimation) {
+         setGain(gainPercentage, 0.01);
+    }
+});
+
 // helper to shuffle array
 function shuffleArray(array) {
 	"use strict";
@@ -414,7 +467,7 @@ $("#goButton").click(function () {
 // init on document load
 $(document).ready(function() {
 	"use strict";
-    
+
     // update numBars slider
     updateNumBars(startingBars);
     
@@ -423,6 +476,9 @@ $(document).ready(function() {
     
     // update selected sort
     $(".selectedSortText").text(selectedSort.displayName);
+    
+    // set gain
+    updateVolume(gainPercentage*100);
     
     // set counters
     updateCounters();
@@ -433,7 +489,6 @@ $(document).ready(function() {
     
     // draw actual display
     initialiseBars();
-    
 });
 
 // get instructions from current selected sort and play with playSortInstructions
@@ -448,20 +503,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// doesn't work
-//function playTone(frequency, seconds) {
-//    "use strict";
-//    if (context.resume) {
-//        context.resume();
-//    }
-//    o.frequency.linearRampToValueAtTime(frequency, context.currentTime);
-//    g.gain.cancelScheduledValues(context.currentTime);
-//    g.gain.linearRampToValueAtTime(1, context.currentTime);
-//    g.gain.linearRampToValueAtTime(
-//        0, context.currentTime + seconds
-//    );
-//}
-
 // updates the counters based on the global counters object
 function updateCounters() {
     "use strict";
@@ -470,12 +511,32 @@ function updateCounters() {
     });
 }
 
+// switches to requested frequency
+function playTone(newFreq) {
+    "use strict";
+    audioCtx.resume().then(() => {
+        tone.frequency.linearRampToValueAtTime(newFreq, audioCtx.currentTime + 0.01);
+    });
+}
+
+// given a percentage value, sets the gain
+function setGain(gainPercentage, delay) {
+    "use strict";
+    var newGain = ((gainRange[1] - gainRange[0]) * (gainPercentage)) + gainRange[0];
+    volume.gain.linearRampToValueAtTime(newGain, audioCtx.currentTime + delay);
+}
+
 // play the generated sort instructions
 async function playSortInstructions(instructions) {
     "use strict";
+    finishedAnimation = false;
+    if (!isMuted) {
+        setGain(gainPercentage, 0.01);
+    }
     var instruction;
     for (var x = 0; x < instructions.length - 1; x++) {
         if (isPaused) {
+            finishedAnimation = true;
             // redraw canvas
             var canvas = $(canvasSelector);
             clearCanvas();
@@ -487,7 +548,7 @@ async function playSortInstructions(instructions) {
         if (instruction.type === "SELECT") {
             
             
-            //playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ), actualDelay/1000);
+            playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ));
             
             
             $(canvasSelector).animateLayer("#" + bars[instruction.index], {
@@ -501,6 +562,7 @@ async function playSortInstructions(instructions) {
         }
         
         else if (instruction.type === "SWAP") {
+            
             // actually swap bars array indexes
             var temp = bars[instruction.indexes[0]];
             bars[instruction.indexes[0]] = bars[instruction.indexes[1]];
@@ -532,4 +594,8 @@ async function playSortInstructions(instructions) {
             await sleep(actualDelay);
         }
     }
+    setGain(0, actualDelay/1000);
+    finishedAnimation = true;
+    isPaused = true;
+    $(".pausePlayButton").removeClass("paused");
 }
