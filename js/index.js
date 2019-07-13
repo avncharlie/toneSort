@@ -537,6 +537,9 @@ function updateCounters() {
 function playTone(newFreq) {
     "use strict";
     audioCtx.resume().then(() => {
+        if (!isMuted) {
+            setGain(gainPercentage, 0.01);
+        }
         tone.frequency.linearRampToValueAtTime(newFreq, audioCtx.currentTime + 0.01);
     });
 }
