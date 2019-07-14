@@ -33,16 +33,48 @@ input[type=range]::-webkit-slider-runnable-track {
   height: 100%; }
   #container #output {
     float: left;
-    width: 80%;
+    width: calc(100% - 250px);
     height: 100%;
     background: linear-gradient(to bottom left, #FCD0F4ED, #FFECA8C9); }
+    @media screen and (max-width: 900px) {
+      #container #output {
+        width: calc(100% - 210px); } }
+    @media screen and (max-width: 750px) {
+      #container #output {
+        width: 100%; } }
     #container #output #barDisplay {
       display: block; }
+  #container #controlPopoutButton {
+    cursor: pointer;
+    display: block;
+    position: fixed;
+    font-size: 2em;
+    right: 15px;
+    top: 15px;
+    background: #D9FEBA;
+    border-radius: 5px;
+    border: solid;
+    border-color: #88B5F4; }
+    @media screen and (min-width: 750px) {
+      #container #controlPopoutButton {
+        display: none; } }
+    #container #controlPopoutButton i {
+      padding: 5px;
+      color: #88B5F4; }
   #container #controls {
+    display: block;
     float: right;
     background: linear-gradient(#D9FEBA, #FFE584);
-    width: 20%;
-    height: 100%; }
+    width: 250px;
+    height: 100%;
+    overflow: auto; }
+    @media screen and (max-width: 900px) {
+      #container #controls {
+        display: block;
+        width: 210px; } }
+    @media screen and (max-width: 750px) {
+      #container #controls {
+        display: none; } }
     #container #controls .button {
       font-family: Raleway;
       background-color: transparent;
@@ -75,7 +107,7 @@ input[type=range]::-webkit-slider-runnable-track {
       color: #88B5F4;
       font-weight: bold; }
     #container #controls #stats {
-      margin-top: 25px; }
+      margin-top: 90px; }
     #container #controls #statContainer > p {
       margin: 0px;
       margin-left: 12px;
@@ -88,6 +120,8 @@ input[type=range]::-webkit-slider-runnable-track {
       #container #controls #statContainer > p span {
         color: #000;
         margin-left: 4px; }
+    #container #controls #statContainer {
+      margin-bottom: 15px; }
     #container #controls .slidecontainer {
       width: calc(100% - 23px);
       margin: 10px; }
@@ -171,7 +205,7 @@ input[type=range]::-webkit-slider-runnable-track {
     #container .pausePlayButton:hover {
       border-color: transparent transparent transparent #9a8bed; }
   #container #sortContainer {
-    overflow: hidden;
+    position: relative;
     margin: 10px; }
     #container #sortContainer #dropdown:hover #dropdownContainer {
       opacity: 1;
@@ -191,7 +225,7 @@ input[type=range]::-webkit-slider-runnable-track {
       transition: all 70ms linear; }
       #container #sortContainer #dropdownContainer p {
         font-family: Raleway;
-        padding: 14px 14.5px;
+        padding: 14px 12.5px;
         margin: 0px;
         text-decoration: none;
         display: block;

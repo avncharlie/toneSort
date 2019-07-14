@@ -29,6 +29,8 @@ var colourGradient = ["#FFD184", "#7B68EE"];
 
 var selectedColour = "#7054B2";
 
+var controlsPoppedOut = false;
+
 // start off with 10 bars
 var bars = [...Array(startingBars).keys()];
 
@@ -237,6 +239,25 @@ function clearCanvas() {
     }
 }
 
+// popout controls on small screens
+$("#controlPopoutButton").click(function() {
+	"use strict";
+    
+    if (!controlsPoppedOut) {
+        $("#controls").css({display: "block"});
+        $("#output").css({width: "calc(100% - 210px)"});
+        controlsPoppedOut = true;
+    } else {
+        $("#controls").css({display: "none"});
+        $("#output").css({width: "100%"});
+        controlsPoppedOut = false;
+    }
+    
+    var canvas = $(canvasSelector);
+    clearCanvas();
+    initialiseBars();
+});
+
 // randomise bars
 $("#randomise").click(function() {
 	"use strict";
@@ -272,6 +293,24 @@ $(".volumeButton").click(function() {
 // redraw on resize
 $(window).resize(function(){
     "use strict";
+    // making sure correct display is showing for screen size
+    if (window.innerWidth >= 900) {
+        controlsPoppedOut = false;
+        $("#output").css({width: "calc(100% - 250px)"});
+        $("#controls").css({display: "block"});
+    } else if (window.innerWidth >= 750) {
+        controlsPoppedOut = false;
+        $("#output").css({width: "calc(100% - 210px)"});
+        $("#controls").css({display: "block"});
+    } else {
+        if (!controlsPoppedOut) {
+            $("#output").css({width: "100%"});
+            $("#controls").css({display: "none"});
+        } else {
+            $("#output").css({width: "calc(100% - 210px)"});
+            $("#controls").css({display: "block"});
+        }
+    }
     // redraw canvas
     var canvas = $(canvasSelector);
     clearCanvas();

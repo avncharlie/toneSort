@@ -13,6 +13,13 @@ $bar-selected-colour: unquote("#7054B2")
 // transition delay for control elements
 $control-transition-delay: 0.1s
 
+// control width
+$controls-width: 250px
+$controls-width-small: 210px
+
+$medium-break: 900px
+$small-break: 750px
+
 // slider
 $thumb-radius: 30px
 $thumb-color: unquote("#88B5F4")
@@ -61,18 +68,52 @@ input[type=range]::-webkit-slider-runnable-track
 
 	#output
 		float: left
-		width: 80%
+		width: calc(100% - #{$controls-width})
 		height: 100%
 		background: linear-gradient(to bottom left, $output-top-right-gradient,$output-bottom-left-gradient)
-        
+
+		@media screen and (max-width: $medium-break)
+			width: calc(100% - #{$controls-width-small})
+
+		@media screen and (max-width: $small-break)
+			width: 100%
+
 		#barDisplay
 			display: block
 
+	#controlPopoutButton
+		cursor: pointer
+		display: block
+		position: fixed
+		font-size: 2em
+		right: 15px
+		top: 15px
+		background: $controls-top-gradient
+		border-radius: 5px
+		border: solid
+		border-color: $button-primary-color
+
+		@media screen and (min-width: $small-break)
+			display: none
+
+		i
+			padding: 5px
+			color: $button-primary-color
+    
 	#controls
+		display: block
 		float: right
 		background: linear-gradient($controls-top-gradient, $controls-bottom-gradient) 
-		width: 20%
+		width: $controls-width
 		height: 100%
+		overflow: auto
+
+		@media screen and (max-width: $medium-break)
+			display: block
+			width: $controls-width-small
+
+		@media screen and (max-width: $small-break)
+			display: none
 
 		.button
 			font-family: Raleway
@@ -110,7 +151,7 @@ input[type=range]::-webkit-slider-runnable-track
 			font-weight: bold
 
 		#stats
-			margin-top: 25px
+			margin-top: 90px
 
 		#statContainer>p
 			margin: 0px
@@ -126,6 +167,9 @@ input[type=range]::-webkit-slider-runnable-track
 				color: unquote("#000")
 				margin-left: 4px
 
+		#statContainer
+			margin-bottom: 15px
+    
 		.slidecontainer
 			width: calc(100% - 23px)
 			margin: 10px
@@ -232,7 +276,8 @@ input[type=range]::-webkit-slider-runnable-track
 
 	#sortContainer
 		//border-style: solid
-		overflow: hidden
+		position: relative
+		//overflow: hidden
 		margin: 10px
 
 		#dropdown
@@ -256,7 +301,7 @@ input[type=range]::-webkit-slider-runnable-track
 
 			p
 				font-family: Raleway
-				padding: 14px 14.5px
+				padding: 14px 12.5px
 				margin: 0px
 				text-decoration: none
 				display: block
