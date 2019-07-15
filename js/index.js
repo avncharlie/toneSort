@@ -21,6 +21,7 @@ var finishedAnimation = true;
 var isPaused = true;
 
 var actualDelay = 700-delay+1;
+var animationDelayCutoff = 35;
 
 var canvasSelector = "#barDisplay";
 var canvasParentSelector = "#output";   
@@ -488,6 +489,7 @@ $("#delaySlideContainer").on('input', function(e) {
     updateDelay(newDelay);
     delay = newDelay;
     actualDelay = 700 - newDelay + 1;
+    console.log(actualDelay);
 });
 
 function updateVolume(newVolume) {
@@ -708,13 +710,19 @@ async function playSortInstructions(instructions) {
         
         if (instruction.type === "SELECT") {
             
-            
             playTone(frequencyVals[0] + (bars[instruction.index] * ((frequencyVals[1]-frequencyVals[0])/bars.length) ));
             
-            
-            $(canvasSelector).animateLayer("#" + bars[instruction.index], {
-                fillStyle: selectedColour
-            }, actualDelay, function(){});
+            if (actualDelay > animationDelayCutoff) {
+                // animation
+                $(canvasSelector).animateLayer("#" + bars[instruction.index], {
+                    fillStyle: selectedColour
+                }, actualDelay, function(){});
+            } else {
+                // non animation
+                $(canvasSelector).setLayer("#" + bars[instruction.index], {
+                    fillStyle: selectedColour
+                }).drawLayers();
+            }
         } 
         
         else if (instruction.type === "INCREMENT") {
@@ -733,14 +741,13 @@ async function playSortInstructions(instructions) {
             var canvas = $(canvasSelector);
             var barWidth = canvas.innerWidth() / bars.length;
             var swapWidth = (instruction.indexes[0] - instruction.indexes[1]) * barWidth;
-            // left bar to right
             $(canvasSelector).animateLayer("#" + bars[instruction.indexes[0]], {
                 x: "+=" + swapWidth
             }, actualDelay, function(){});
-             // right bar to left
             $(canvasSelector).animateLayer("#" + bars[instruction.indexes[1]], {
                 x: "-=" + swapWidth
             }, actualDelay, function(){});
+            
         }
         
         else if (instruction.type === "DESELECT") {
