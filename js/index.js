@@ -194,6 +194,93 @@ function insertionSortGenerator(bars) {
     instructions.push({type: "DESELECT", index: x});
     return instructions;
 }
+function cocktailSortGenerator(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    var instructions = [];
+    
+    var swapped = true;
+    var start = 0;
+    var end = newBars.length - 1;
+    
+    while (swapped) {
+        swapped = false;
+        
+        // forward pass
+        for (var x = start; x < end; x++) {
+            
+            instructions.push({type: "SELECT", index: x});
+            
+             // accessing x and x + 1
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            
+            instructions.push({type: "INCREMENT", counter: "comparisons"});
+            if (newBars[x] > newBars[x + 1]) {
+                instructions.push({type: "SELECT", index: x + 1});
+                
+                // swap
+                var temp = newBars[x];
+                newBars[x] = newBars[x + 1];
+                newBars[x + 1] = temp;
+                swapped = true;
+                
+                // swapping - writing to x and x + 1
+                instructions.push({type: "INCREMENT", counter: "steps"});
+                instructions.push({type: "INCREMENT", counter: "steps"});
+                
+                instructions.push({type: "SWAP", indexes: [x, x + 1]});
+            }
+            
+            instructions.push({type: "DESELECT", index: x});
+            instructions.push({type: "DESELECT", index: x + 1});
+        }
+        
+        if (!swapped) {
+            break; // is sorted
+        } else {
+            // prepare for next passthrough
+            swapped = false;
+        }
+        
+        end--;
+        
+        // backward pass
+        for (var y = end; y > start; y--) {
+            
+            instructions.push({type: "SELECT", index: y});
+            
+            // accessing y and y - 1
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            instructions.push({type: "INCREMENT", counter: "steps"});
+            
+            instructions.push({type: "INCREMENT", counter: "comparisons"});
+            if (newBars[y] < newBars[y - 1]) {
+                instructions.push({type: "SELECT", index: y - 1});
+                
+                // swap
+                var temp2 = newBars[y];
+                newBars[y] = newBars[y - 1];
+                newBars[y - 1] = temp2;
+                swapped = true;
+                
+                // swapping - writing to y and y - 1
+                instructions.push({type: "INCREMENT", counter: "steps"});
+                instructions.push({type: "INCREMENT", counter: "steps"});
+                
+                instructions.push({type: "SWAP", indexes: [y, y - 1]});
+            }
+            instructions.push({type: "DESELECT", index: y});
+            instructions.push({type: "DESELECT", index: y - 1});
+        }
+        
+        start++;
+    }
+    
+    return instructions;
+}
 
 // global object storing all sort generators
 var sorts = {
@@ -208,6 +295,10 @@ var sorts = {
     insertionSort: {
         displayName: "insertion sort",
         generator: insertionSortGenerator
+    },
+    cocktailSort: {
+        displayName: "cocktail sort",
+        generator: cocktailSortGenerator
     }
 };
 
@@ -290,7 +381,7 @@ $(".volumeButton").click(function() {
     }
 });
 
-// redraw on resize
+// redraw resize
 $(window).resize(function(){
     "use strict";
     // making sure correct display is showing for screen size
@@ -476,8 +567,9 @@ $(".pausePlayButton").click(function() {
 });
 
 // update sort type
-$("#dropdownContainer>p").click(function (event) {
+$("#dropdownContainer").on('click', 'p', function(event){
     "use strict";
+    
     pauseAndReset();
     
     var newSelectedSort = $(event.target).text();
@@ -537,6 +629,11 @@ $(document).ready(function() {
     
     // update selected sort
     $(".selectedSortText").text(selectedSort.displayName);
+    
+    // populate sorts list
+    Object.keys(sorts).forEach(function(key,index) {
+        $("#dropdownContainer").append("<p>" + sorts[key].displayName + "</p>");
+    });
     
     // set gain
     updateVolume(gainPercentage*100);
@@ -659,6 +756,7 @@ async function playSortInstructions(instructions) {
         }
     }
     setGain(0, actualDelay/1000);
+    playTone(0); // workaround for when tone randomly still plays
     finishedAnimation = true;
     isPaused = true;
     $(".pausePlayButton").removeClass("paused");
