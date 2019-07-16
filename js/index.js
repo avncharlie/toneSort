@@ -4,7 +4,7 @@
 // FIX SOUND
 
 // once set here, will update through interface
-var startingBars = 10;
+var startingBars = 15;
 var delay = 500;
 var counters = {
     steps: 0,
@@ -49,6 +49,80 @@ tone.type = "triangle";
 tone.start();
 tone.connect(volume);
 setGain(0, 0.0000001);
+
+// quicksort stuff
+function quickSort(arr, left, right, instructionObj){
+    "use strict";
+    
+    // taken from https://khan4019.github.io/front-end-Interview-Questions/sort.html
+    
+    var pivot;
+    var partitionIndex;
+    
+    if (left < right) {
+        pivot = right;
+        
+        partitionIndex = partition(arr, pivot, left, right, instructionObj);
+    
+        // sort left and right
+        quickSort(arr, left, partitionIndex - 1, instructionObj);
+        quickSort(arr, partitionIndex + 1, right, instructionObj);
+        
+    }
+    return arr;
+}
+function partition(arr, pivot, left, right, instructionObj){
+    "use strict";
+    
+    instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+    
+    var pivotValue = arr[pivot],
+        partitionIndex = left;
+
+    for (var i = left; i < right; i++) {
+        
+        instructionObj.instructions.push({type: "SELECT", index: i});
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+        if (arr[i] < pivotValue) {
+            
+            instructionObj.instructions.push({type: "SELECT", index: partitionIndex});
+            instructionObj.instructions.push({type: "SWAP", indexes: [i, partitionIndex]});
+            
+            instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+            instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+            
+            swap(arr, i, partitionIndex);
+            
+            instructionObj.instructions.push({type: "DESELECT", index: i});
+            instructionObj.instructions.push({type: "DESELECT", index: partitionIndex});
+            
+            partitionIndex++;
+        }
+        instructionObj.instructions.push({type: "DESELECT", index: i});
+    }
+    
+    instructionObj.instructions.push({type: "SELECT", index: right});
+    instructionObj.instructions.push({type: "SELECT", index: partitionIndex});
+    
+    instructionObj.instructions.push({type: "SWAP", indexes: [right, partitionIndex]});
+    
+    instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+    instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+    
+    swap(arr, right, partitionIndex);
+    
+    instructionObj.instructions.push({type: "DESELECT", index: right});
+    instructionObj.instructions.push({type: "DESELECT", index: partitionIndex});
+    return partitionIndex;
+}
+function swap(arr, i, j){
+    "use strict";
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
 
 // init sorts
 function bubbleSortGenerator(bars) {
@@ -197,6 +271,20 @@ function insertionSortGenerator(bars) {
     instructions.push({type: "DESELECT", index: x});
     return instructions;
 }
+function quickSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual quick sort
+    quickSort(newBars, 0, newBars.length - 1, instructionObj);
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
+}
 function cocktailSortGenerator(bars) {
     "use strict";
     // copy bars
@@ -298,6 +386,10 @@ var sorts = {
     insertionSort: {
         displayName: "insertion sort",
         generator: insertionSortGenerator
+    },
+    quickSort: {
+        displayName: "quick sort",
+        generator: quickSortGeneratorWrapper
     },
     cocktailSort: {
         displayName: "cocktail sort",
@@ -430,7 +522,7 @@ function initialiseBars() {
 function updateNumBars(newNumBars) {
     "use strict";
     $("#numBars").val(newNumBars);
-    var convertedPercentage = ((newNumBars-3)/97)*100;
+    var convertedPercentage = ((newNumBars-3)/197)*100;
     var offset = 2;
     $("#numBarsDisplay").css('left', 'calc(' + convertedPercentage + '% - ' + (30*convertedPercentage/100 - offset) +'px)');
     $("#numBars").css('display', 'block');
@@ -438,8 +530,17 @@ function updateNumBars(newNumBars) {
     $("#numBarsDisplay").text(newNumBars);
 }
 
-// add or take away bars
+// cosmetics so number updates while dragging bars
 $("#numBars").on('input', function(e) {
+	"use strict";
+    pauseAndReset();
+    
+    var newNumBars = $(e.target).val();
+    updateNumBars(newNumBars);
+});
+
+// add or take away bars (on change instead of input otherwise too much lag)
+$("#numBars").on('change', function(e) {
 	"use strict";
     pauseAndReset();
     
@@ -498,7 +599,7 @@ $("#delaySlideContainer").on('input', function(e) {
         if (delayPercentage > 0.6) {
             frameSkip = 2;
         } else {
-            frameSkip = 3;
+            frameSkip = 2; // was originally 3 but too laggy to do so
         }
     } else {
         frameSkip = 1;
