@@ -4,7 +4,7 @@
 // FIX SOUND
 
 // once set here, will update through interface
-var startingBars = 15;
+var startingBars = 4;
 var delay = 500;
 var counters = {
     steps: 0,
@@ -34,7 +34,6 @@ var selectedColour = "#7054B2";
 
 var controlsPoppedOut = false;
 
-// start off with 10 bars
 var bars = [...Array(startingBars).keys()];
 
 // init sound
@@ -50,11 +49,11 @@ tone.start();
 tone.connect(volume);
 setGain(0, 0.0000001);
 
-// quicksort stuff
+// quicksort 
 function quickSort(arr, left, right, instructionObj){
     "use strict";
     
-    // taken from https://khan4019.github.io/front-end-Interview-Questions/sort.html
+    // used from https://khan4019.github.io/front-end-Interview-Questions/sort.html
     
     var pivot;
     var partitionIndex;
@@ -117,11 +116,126 @@ function partition(arr, pivot, left, right, instructionObj){
     instructionObj.instructions.push({type: "DESELECT", index: partitionIndex});
     return partitionIndex;
 }
+
+// heapsort
+var array_length;
+function heapSort(input, instructionObj) {
+    "use strict";
+    
+    // used from https://www.w3resource.com/javascript-exercises/searching-and-sorting-algorithm/searching-and-sorting-algorithm-exercise-3.php
+    
+    array_length = input.length;
+
+    for (var i = Math.floor(array_length / 2); i >= 0; i -= 1) {
+        heap_root(input, i, instructionObj);
+    }
+
+    for (i = input.length - 1; i > 0; i--) {
+        instructionObj.instructions.push({type: "SELECT", index: 0});
+        instructionObj.instructions.push({type: "SELECT", index: i});
+        
+        instructionObj.instructions.push({type: "SWAP", indexes: [0, i]});
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        
+        swap(input, 0, i);
+        
+        instructionObj.instructions.push({type: "DESELECT", index: 0});
+        instructionObj.instructions.push({type: "DESELECT", index: i});
+        
+        array_length--;
+      
+        heap_root(input, 0, instructionObj);
+    }
+}
+function heap_root(input, i, instructionObj) {
+    "use strict";
+    
+    var left = 2 * i + 1;
+    var right = 2 * i + 2;
+    var max = i;
+    
+    instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+    instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+    
+    instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+    instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+    instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+    
+    if (left < array_length && input[left] > input[max]) {
+        max = left;
+    }
+
+    if (right < array_length && input[right] > input[max])     {
+        max = right;
+    }
+
+    if (max !== i) {
+        
+        instructionObj.instructions.push({type: "SELECT", index: i});
+        instructionObj.instructions.push({type: "SELECT", index: max});
+        
+        instructionObj.instructions.push({type: "SWAP", indexes: [i, max]});
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        
+        swap(input, i, max);
+        
+        instructionObj.instructions.push({type: "DESELECT", index: i});
+        instructionObj.instructions.push({type: "DESELECT", index: max});
+        
+        heap_root(input, max, instructionObj);
+    }
+}
+
+// general swap function
 function swap(arr, i, j){
     "use strict";
     var temp = arr[i];
     arr[i] = arr[j];
     arr[j] = temp;
+}
+
+// ### mergesort - edit animation playback to just overwrite vals instead of in place
+function mergeSort(arr){
+    "use strict";
+    
+    // used from https://khan4019.github.io/front-end-Interview-Questions/sort.html
+    
+    var len = arr.length;
+    
+    if (len < 2) {
+        return arr;
+    }
+    
+    var mid = Math.floor(len / 2),
+        left = arr.slice(0, mid),
+        right = arr.slice(mid);
+    
+    return merge(mergeSort(left), mergeSort(right));
+}
+function merge(left, right){
+    "use strict";
+    
+    var result = [],
+        lLen = left.length,
+        rLen = right.length,
+        l = 0,
+        r = 0;
+    
+    while (l < lLen && r < rLen) {
+        if (left[l] < right[r]){
+            result.push(left[l++]);
+        }
+        else {
+            result.push(right[r++]);
+        }
+    }  
+    
+    // remaining part needs to be addred to the result
+    return result.concat(left.slice(l)).concat(right.slice(r));
 }
 
 // init sorts
@@ -285,6 +399,20 @@ function quickSortGeneratorWrapper(bars) {
     // modified instructionObj contains the actual instructions
     return instructionObj.instructions;
 }
+function heapSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual heap sort
+    heapSort(newBars, instructionObj);
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
+}
 function cocktailSortGenerator(bars) {
     "use strict";
     // copy bars
@@ -373,6 +501,24 @@ function cocktailSortGenerator(bars) {
     return instructions;
 }
 
+// ###
+function mergeSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual quick sort
+    return quickSort(newBars, 0, newBars.length - 1, instructionObj);
+    
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
+
+}
+
 // global object storing all sort generators
 var sorts = {
     bubbleSort: {
@@ -391,6 +537,15 @@ var sorts = {
         displayName: "quick sort",
         generator: quickSortGeneratorWrapper
     },
+    heapSort: {
+        displayName: "heap sort",
+        generator: heapSortGeneratorWrapper
+    },
+    // ###
+    //mergeSort: {
+    //     displayName: "merge sort",
+    //    generator: mergeSortGeneratorWrapper
+    //},
     cocktailSort: {
         displayName: "cocktail sort",
         generator: cocktailSortGenerator
@@ -643,6 +798,7 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+    console.log(array);
 }
 
 // bars doesn't have to be in order
