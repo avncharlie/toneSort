@@ -4,7 +4,7 @@
 // FIX SOUND
 
 // once set here, will update through interface
-var startingBars = 4;
+var startingBars = 20;
 var delay = 500;
 var counters = {
     steps: 0,
@@ -798,7 +798,6 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-    console.log(array);
 }
 
 // bars doesn't have to be in order
