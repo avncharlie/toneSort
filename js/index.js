@@ -1,8 +1,5 @@
 /*jshint esversion: 6 */
 
-// FRAME SKIP
-// FIX SOUND
-
 // once set here, will update through interface
 var startingBars = 20;
 var delay = 500;
@@ -198,14 +195,13 @@ function swap(arr, i, j){
     arr[j] = temp;
 }
 
-// ### mergesort - edit animation playback to just overwrite vals instead of in place
-function mergeSort(arr){
+// mergesort
+function mergeSort(arr, actualStart, instructionObj) {
     "use strict";
-    
-    // used from https://khan4019.github.io/front-end-Interview-Questions/sort.html
     
     var len = arr.length;
     
+    instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
     if (len < 2) {
         return arr;
     }
@@ -214,9 +210,9 @@ function mergeSort(arr){
         left = arr.slice(0, mid),
         right = arr.slice(mid);
     
-    return merge(mergeSort(left), mergeSort(right));
+    return merge(mergeSort(left, actualStart, instructionObj), mergeSort(right, actualStart + mid, instructionObj), actualStart, instructionObj);
 }
-function merge(left, right){
+function merge(left, right, actualStart, instructionObj){
     "use strict";
     
     var result = [],
@@ -224,6 +220,44 @@ function merge(left, right){
         rLen = right.length,
         l = 0,
         r = 0;
+    
+    // highlight arrays before merging
+    var minLen = Math.min(lLen, rLen);
+    var maxLen = Math.max(lLen, rLen);
+    var count = 0;
+    // shared area
+    while (count < minLen) {
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+        
+        instructionObj.instructions.push({type: "SELECT", index: actualStart + count}); // left
+        instructionObj.instructions.push({type: "DESELECT", index: actualStart + count});
+        instructionObj.instructions.push({type: "SELECT", index: actualStart + lLen + count}); // right
+        instructionObj.instructions.push({type: "DESELECT", index: actualStart + lLen + count});
+        count++;
+    }
+    // if left or right is bigger
+    while (count < maxLen - minLen) {
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+        
+        if (rLen > lLen) {
+            // right is bigger
+            instructionObj.instructions.push({type: "SELECT", index: actualStart + lLen + count});
+            instructionObj.instructions.push({type: "DESELECT", index: actualStart + lLen + count});
+        } else {
+            // left is bigger
+            instructionObj.instructions.push({type: "SELECT", index: actualStart + count});
+            instructionObj.instructions.push({type: "DESELECT", index: actualStart + count});
+        }
+        count++;
+    }
     
     while (l < lLen && r < rLen) {
         if (left[l] < right[r]){
@@ -235,7 +269,20 @@ function merge(left, right){
     }  
     
     // remaining part needs to be addred to the result
-    return result.concat(left.slice(l)).concat(right.slice(r));
+    var final = result.concat(left.slice(l)).concat(right.slice(r));
+    
+    for (var x = actualStart; x < final.length + actualStart; x++) {
+        instructionObj.instructions.push({type: "VISUALREPLACE", index: x, newVal: final[x - actualStart]});
+    }
+    
+    instructionObj.instructions.push({
+        type: "ACTUALREPLACE",
+        startIndex: actualStart,
+        newVals: final
+    });
+    
+    
+    return final;
 }
 
 // init sorts
@@ -413,6 +460,21 @@ function heapSortGeneratorWrapper(bars) {
     // modified instructionObj contains the actual instructions
     return instructionObj.instructions;
 }
+function mergeSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual mergeSort
+    mergeSort(newBars, 0, instructionObj);
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
+
+}
 function cocktailSortGenerator(bars) {
     "use strict";
     // copy bars
@@ -501,24 +563,6 @@ function cocktailSortGenerator(bars) {
     return instructions;
 }
 
-// ###
-function mergeSortGeneratorWrapper(bars) {
-    "use strict";
-    // copy bars
-    var newBars = [...bars];
-    
-    // use object to use by reference like variable passing
-    var instructionObj = { instructions: [] };
-    
-    // call actual quick sort
-    return quickSort(newBars, 0, newBars.length - 1, instructionObj);
-    
-    
-    // modified instructionObj contains the actual instructions
-    return instructionObj.instructions;
-
-}
-
 // global object storing all sort generators
 var sorts = {
     bubbleSort: {
@@ -533,6 +577,10 @@ var sorts = {
         displayName: "insertion sort",
         generator: insertionSortGenerator
     },
+    mergeSort: {
+         displayName: "merge sort",
+        generator: mergeSortGeneratorWrapper
+    },
     quickSort: {
         displayName: "quick sort",
         generator: quickSortGeneratorWrapper
@@ -541,11 +589,6 @@ var sorts = {
         displayName: "heap sort",
         generator: heapSortGeneratorWrapper
     },
-    // ###
-    //mergeSort: {
-    //     displayName: "merge sort",
-    //    generator: mergeSortGeneratorWrapper
-    //},
     cocktailSort: {
         displayName: "cocktail sort",
         generator: cocktailSortGenerator
@@ -606,10 +649,13 @@ $("#randomise").click(function() {
     pauseAndReset();
     
     var canvas = $(canvasSelector);
+    
     // shuffle bars
-	shuffleArray(bars);
+    shuffleArray(bars);
+
     // redraw canvas
     clearCanvas();
+    
     // draw
     drawBars(bars, colourGradient, canvas);
 });
@@ -754,7 +800,7 @@ $("#delaySlideContainer").on('input', function(e) {
         if (delayPercentage > 0.6) {
             frameSkip = 2;
         } else {
-            frameSkip = 2; // was originally 3 but too laggy to do so
+            frameSkip = 3; // gets changed to 2 when using insertion sort (it gets buggy for some reason)
         }
     } else {
         frameSkip = 1;
@@ -960,12 +1006,23 @@ function setGain(gainPercentage, delay) {
 // play the generated sort instructions
 async function playSortInstructions(instructions) {
     "use strict";
+    
+    var colourScales = chroma.scale(colourGradient).colors(bars.length);
+    
     finishedAnimation = false;
     if (!isMuted) {
         setGain(gainPercentage, 0.01);
     }
+    
+    // change from 3 -> 2 frameskip when insertion sort is used as it is buggy otherwise
+    var usedframeSkip = frameSkip;
+    if (selectedSort.displayName === "insertion sort" && frameSkip === 3) {
+        usedframeSkip = 2;
+    }
+    
     var instruction;
-    for (var x = 0; x < instructions.length - 1; x++) {
+    for (var x = 0; x < instructions.length; x++) {
+        
         if (isPaused) {
             finishedAnimation = true;
             // redraw canvas
@@ -1028,15 +1085,37 @@ async function playSortInstructions(instructions) {
             }
         }
         
+        else if (instruction.type === "VISUALREPLACE") {
+            
+            var moveIndex = bars.indexOf(instruction.newVal);
+            
+            var canvas = $(canvasSelector);
+            var barWidth = canvas.innerWidth() / bars.length;
+            var swapWidth = (instruction.index - moveIndex) * barWidth;
+            
+            // animation
+            $(canvasSelector).animateLayer("#" + instruction.newVal, {
+                x: "+=" + swapWidth,
+                bringToFront: true
+            }, actualDelay, function(){});
+
+        }
+        
+        else if (instruction.type === "ACTUALREPLACE") {
+            for (var m = instruction.startIndex; m < instruction.newVals.length + instruction.startIndex; m++) {
+                bars[m] = instruction.newVals[m - instruction.startIndex];
+            }
+        }
+        
         else if (instruction.type === "DESELECT") {
-            var colourScales = chroma.scale(colourGradient).colors(bars.length);
+
             $(canvasSelector).animateLayer("#" + bars[instruction.index], {
                 fillStyle: colourScales[bars[instruction.index]]
             }, actualDelay, function(){});
         }
         
-        // no delay on deselecting or incrementing counters
-        if ( (!["DESELECT", "INCREMENT"].includes(instruction.type)) && (x % frameSkip === 0) ) {
+        // no delay on some instructions
+        if ( (!["DESELECT", "INCREMENT", "ACTUALREPLACE"].includes(instruction.type)) && (x % usedframeSkip === 0) ) {
             await sleep(actualDelay);
         }
     }
