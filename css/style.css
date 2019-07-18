@@ -220,8 +220,8 @@ input[type=range]::-webkit-slider-runnable-track {
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
       margin-top: 54px;
-      max-height: 250px;
-      overflow: auto;
+      max-height: 200px;
+      overflow: scroll;
       transition: all 70ms linear; }
       #container #sortContainer #dropdownContainer p {
         font-family: Raleway;
