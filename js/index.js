@@ -18,7 +18,7 @@ var finishedAnimation = true;
 var isPaused = true;
 
 var actualDelay = 700-delay+1;
-var animationDelayCutoff = 35;
+var animationDelayCutoff = 140;
 
 var frameSkip = 1;
 
@@ -641,6 +641,10 @@ var sorts = {
         displayName: "insertion sort",
         generator: insertionSortGenerator
     },
+    radixSort: {
+        displayName: "radix sort",
+        generator: radixSortGeneratorWrapper
+    },
     mergeSort: {
          displayName: "merge sort",
         generator: mergeSortGeneratorWrapper
@@ -652,10 +656,6 @@ var sorts = {
     heapSort: {
         displayName: "heap sort",
         generator: heapSortGeneratorWrapper
-    },
-    radixSort: {
-        displayName: "radix sort",
-        generator: radixSortGeneratorWrapper
     },
     cocktailSort: {
         displayName: "cocktail sort",
@@ -708,6 +708,25 @@ $("#controlPopoutButton").click(function() {
     var canvas = $(canvasSelector);
     clearCanvas();
     initialiseBars();
+});
+
+// custom amountof bars
+$("#customBarsButton").click(function() {
+    "use strict";
+    var value = Number($("#customBars").val());
+    if (value !== 0) {
+        
+        var canvas = $(canvasSelector);
+        
+        // create new bars array
+        bars = [...Array(Number(value)).keys()];
+        
+        // redraw canvas
+        clearCanvas();
+        
+        // draw
+        drawBars(bars, colourGradient, canvas);
+    }
 });
 
 // randomise bars
@@ -860,15 +879,17 @@ $("#delaySlideContainer").on('input', function(e) {
     var newDelay = $(e.target).val();
     updateDelay(newDelay);
     delay = newDelay;
+    
+    var delayPercentage = newDelay/700;
+    
     actualDelay = 700 - newDelay;
     
     // set frameskip
-    var delayPercentage = actualDelay / animationDelayCutoff;
-    if (delayPercentage < 1) {
-        if (delayPercentage > 0.6) {
-            frameSkip = 2;
-        } else {
+    if (delayPercentage > 0.8) {
+        if (delayPercentage > 0.9) {
             frameSkip = 3; // gets changed to 2 when using insertion sort (it gets buggy for some reason)
+        } else {
+            frameSkip = 2;
         }
     } else {
         frameSkip = 1;

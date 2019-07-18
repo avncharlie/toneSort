@@ -29,6 +29,27 @@ input[type=range]::-webkit-slider-runnable-track {
   background: linear-gradient(to right, #FFE584, #7B68EE);
   border-radius: 0px; }
 
+input[type=number] {
+  margin: 12px;
+  margin-top: 0px;
+  background-color: #FFE584;
+  color: white;
+  padding: 5px 5px;
+  font-family: Raleway;
+  font-size: 1em; }
+  @media screen and (max-width: 900px) {
+    input[type=number] {
+      font-size: 0.85em; } }
+
+input[type=number]:focus {
+  outline: none; }
+
+button:focus {
+  outline: none; }
+
+::placeholder {
+  color: white; }
+
 #container {
   height: 100%; }
   #container #output {
@@ -106,6 +127,29 @@ input[type=range]::-webkit-slider-runnable-track {
       font-size: 0.9em;
       color: #88B5F4;
       font-weight: bold; }
+    #container #controls #customBarsContainer {
+      overflow: hidden; }
+      #container #controls #customBarsContainer #customBars {
+        float: left;
+        width: 51%;
+        font-weight: bold; }
+      #container #controls #customBarsContainer #customBarsButton {
+        float: right;
+        background-color: #88B5F4;
+        font-family: Raleway;
+        padding: 6px 0px;
+        text-align: center;
+        font-size: 1em;
+        font-weight: bold;
+        width: 30%;
+        margin: 0 0 0 0;
+        margin-right: 12px;
+        color: #fff;
+        text-transform: uppercase;
+        transition: all 0.1s linear;
+        cursor: grab;
+        float: right;
+        user-select: none; }
     #container #controls #stats {
       margin-top: 90px; }
     #container #controls #statContainer > p {
@@ -220,7 +264,7 @@ input[type=range]::-webkit-slider-runnable-track {
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
       margin-top: 54px;
-      max-height: 200px;
+      max-height: 203px;
       overflow: scroll;
       transition: all 70ms linear; }
       #container #sortContainer #dropdownContainer p {

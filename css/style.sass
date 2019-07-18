@@ -62,6 +62,28 @@ input[type=range]::-webkit-slider-runnable-track
 	background: linear-gradient(to right, $controls-bottom-gradient, $track-color) 
 	border-radius: 0px
 
+input[type=number]
+	margin: 12px
+	margin-top: 0px
+	background-color: $controls-bottom-gradient
+	color: white
+	padding: 5px 5px
+	font-family: Raleway
+	font-size: 1em
+
+	@media screen and (max-width: $medium-break)
+		font-size: 0.85em
+
+input[type=number]:focus
+	outline: none
+
+button:focus
+	outline: none
+
+::placeholder 
+	color: white
+
+
 // body
 #container
 	height: 100%
@@ -150,6 +172,34 @@ input[type=range]::-webkit-slider-runnable-track
 			color: $button-primary-color
 			font-weight: bold
 
+
+		#customBarsContainer
+			//border: solid
+			overflow: hidden
+
+			#customBars
+				float: left
+				width: 51%
+				font-weight: bold
+    
+			#customBarsButton
+				float: right
+				background-color: $button-primary-color
+				font-family: Raleway
+				padding: 6px 0px
+				text-align: center
+				font-size: 1em
+				font-weight: bold
+				width: 30%
+				margin: 0 0 0 0
+				margin-right: 12px
+				color: #fff
+				text-transform: uppercase
+				transition: all $control-transition-delay linear
+				cursor: grab
+				float: right
+				user-select: none
+	
 		#stats
 			margin-top: 90px
 
@@ -295,7 +345,7 @@ input[type=range]::-webkit-slider-runnable-track
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2)
 			z-index: 1
 			margin-top: 54px
-			max-height: 200px
+			max-height: 203px
 			overflow: scroll
 			transition: all 70ms linear
 
