@@ -285,6 +285,56 @@ function merge(left, right, actualStart, instructionObj){
     return final;
 }
 
+// radix sort
+function radixSort(arr, instructionObj) {
+    const max = getMax(arr);
+    
+    for (let i = 0; i < max; i++) {
+        
+        // "pre scan" of array
+        for (var x = 0; x < arr.length; x++) {
+            instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+            instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+            instructionObj.instructions.push({type: "SELECT", index: x});
+            instructionObj.instructions.push({type: "DESELECT", index: x});
+        }
+        
+        // create 10 empty arrays
+        let buckets = Array.from( {length : 10} , () => [] ); 
+       
+        for (let j = 0; j < arr.length; j++) {
+            // push number into desired bucket
+            buckets[getPosition(arr[j],i)].push(arr[j]);               
+        }
+        
+        arr = [].concat(...buckets); 
+        
+        // replace array with new array
+        for (var x = 0; x < arr.length; x++) {
+            instructionObj.instructions.push({type: "VISUALREPLACE", index: x, newVal: arr[x]});
+        }
+    
+        instructionObj.instructions.push({
+            type: "ACTUALREPLACE",
+            startIndex: 0,
+            newVals: arr
+        });
+    }
+   return arr;
+}
+function getPosition(num, place){
+ return  Math.floor(Math.abs(num)/Math.pow(10,place))% 10
+}
+function getMax(arr){
+  let max=0;
+  for(let num of arr){
+    if(max < num.toString().length){
+      max = num.toString().length
+     }
+   }
+  return max
+}  
+
 // init sorts
 function bubbleSortGenerator(bars) {
     "use strict";
@@ -437,7 +487,7 @@ function quickSortGeneratorWrapper(bars) {
     // copy bars
     var newBars = [...bars];
     
-    // use object to use by reference like variable passing
+    // use object to use by reference like by reference variable passing
     var instructionObj = { instructions: [] };
     
     // call actual quick sort
@@ -451,7 +501,7 @@ function heapSortGeneratorWrapper(bars) {
     // copy bars
     var newBars = [...bars];
     
-    // use object to use by reference like variable passing
+    // use object to use by reference like by reference variable passing
     var instructionObj = { instructions: [] };
     
     // call actual heap sort
@@ -465,7 +515,7 @@ function mergeSortGeneratorWrapper(bars) {
     // copy bars
     var newBars = [...bars];
     
-    // use object to use by reference like variable passing
+    // use object to use by reference like by reference variable passing
     var instructionObj = { instructions: [] };
     
     // call actual mergeSort
@@ -474,6 +524,20 @@ function mergeSortGeneratorWrapper(bars) {
     // modified instructionObj contains the actual instructions
     return instructionObj.instructions;
 
+}
+function radixSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like by reference variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual heap sort
+    radixSort(newBars, instructionObj);
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
 }
 function cocktailSortGenerator(bars) {
     "use strict";
@@ -588,6 +652,10 @@ var sorts = {
     heapSort: {
         displayName: "heap sort",
         generator: heapSortGeneratorWrapper
+    },
+    radixSort: {
+        displayName: "radix sort",
+        generator: radixSortGeneratorWrapper
     },
     cocktailSort: {
         displayName: "cocktail sort",
