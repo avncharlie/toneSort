@@ -46,6 +46,11 @@ tone.start();
 tone.connect(volume);
 setGain(0, 0.0000001);
 
+// check if object has property
+Object.prototype.hasOwnProperty = function(property) {
+    return this[property] !== undefined;
+};
+
 // quicksort 
 function quickSort(arr, left, right, instructionObj){
     "use strict";
@@ -335,6 +340,108 @@ function getMax(arr){
   return max
 }  
 
+// cycle sort
+function cycleSortGenerator(array, instructionObj) {
+    "use strict";
+    
+    // loop from the beginning of the array to the second to last item
+    for (let currentIndex = 0; currentIndex < array.length - 1; currentIndex++) {
+        // save the value of the item at the currentIndex
+        let item = array[currentIndex];
+
+        let currentIndexCopy = currentIndex;
+        // loop through all indexes that proceed the currentIndex
+        for (let i = currentIndex + 1; i < array.length; i++) {
+            instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+            if (array[i] < item) {
+                currentIndexCopy++;
+            }
+        }
+
+        // if currentIndexCopy has not changed, the item at the currentIndex is already in the correct currentIndexCopy
+        instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+        if (currentIndexCopy === currentIndex) {
+            continue;
+        }
+
+        // skip duplicates 
+        while (item === array[currentIndexCopy]) {
+            currentIndexCopy++;
+        }
+        
+        instructionObj.instructions.push({type: "SELECT", index: currentIndexCopy});
+        instructionObj.instructions.push({type: "SELECT", index: temp});
+        
+        instructionObj.instructions.push({type: "VISUALREPLACE", index: currentIndexCopy, newVal: item});
+        
+        instructionObj.instructions.push({type: "DESELECT", index: currentIndexCopy});
+        instructionObj.instructions.push({type: "DESELECT", index: temp});
+        
+        // swap
+        
+        instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+        var lastIndex = currentIndexCopy;
+        var temp = array[currentIndexCopy];
+        array[currentIndexCopy] = item;
+        
+        instructionObj.instructions.push({
+            type: "ACTUALREPLACE",
+            startIndex: currentIndexCopy,
+            newVals: [item]
+        });
+        
+        item = temp;
+
+        // repeat above steps as long as we can find values to swap
+        while (currentIndexCopy !== currentIndex) {
+            currentIndexCopy = currentIndex;
+            
+            // loop through all indexes that proceed the currentIndex
+            for (let i = currentIndex + 1; i < array.length; i++) {
+                instructionObj.instructions.push({type: "INCREMENT", counter: "comparisons"});
+                if (array[i] < item) {
+                    currentIndexCopy++;
+                }
+            }
+
+            // skip duplicates
+            while (item === array[currentIndexCopy]) {
+                currentIndexCopy++;
+            }
+                
+            // swap
+            
+            instructionObj.instructions.push({type: "SELECT", index: currentIndexCopy});
+            instructionObj.instructions.push({type: "SELECT", index: temp});
+        
+            instructionObj.instructions.push({
+                type: "VISUALREPLACE", 
+                index: currentIndexCopy, 
+                newVal: item,
+                overrideSwapPosition: lastIndex
+            });
+        
+            instructionObj.instructions.push({type: "DESELECT", index: currentIndexCopy});
+            instructionObj.instructions.push({type: "DESELECT", index: temp});
+
+            
+            instructionObj.instructions.push({type: "INCREMENT", counter: "steps"});
+            
+            lastIndex = currentIndexCopy;
+            temp = array[currentIndexCopy];
+            array[currentIndexCopy] = item;
+            
+            instructionObj.instructions.push({
+                type: "ACTUALREPLACE",
+                startIndex: currentIndexCopy,
+                newVals: [item]
+            });
+            
+            item = temp;
+        }
+    }
+}
+
 // init sorts
 function bubbleSortGenerator(bars) {
     "use strict";
@@ -539,6 +646,21 @@ function radixSortGeneratorWrapper(bars) {
     // modified instructionObj contains the actual instructions
     return instructionObj.instructions;
 }
+function cycleSortGeneratorWrapper(bars) {
+    "use strict";
+    // copy bars
+    var newBars = [...bars];
+    
+    // use object to use by reference like by reference variable passing
+    var instructionObj = { instructions: [] };
+    
+    // call actual cycle sort
+    cycleSortGenerator(newBars, instructionObj);
+    
+    // modified instructionObj contains the actual instructions
+    return instructionObj.instructions;
+}
+
 function cocktailSortGenerator(bars) {
     "use strict";
     // copy bars
@@ -656,6 +778,10 @@ var sorts = {
     heapSort: {
         displayName: "heap sort",
         generator: heapSortGeneratorWrapper
+    },
+    cycleSort: {
+        displayName: "cycle sort",
+        generator: cycleSortGeneratorWrapper
     },
     cocktailSort: {
         displayName: "cocktail sort",
@@ -1177,6 +1303,10 @@ async function playSortInstructions(instructions) {
         else if (instruction.type === "VISUALREPLACE") {
             
             var moveIndex = bars.indexOf(instruction.newVal);
+            
+            if (instruction.hasOwnProperty("overrideSwapPosition")) {
+                moveIndex = instruction.overrideSwapPosition;
+            }
             
             var canvas = $(canvasSelector);
             var barWidth = canvas.innerWidth() / bars.length;
