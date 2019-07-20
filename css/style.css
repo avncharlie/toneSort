@@ -325,5 +325,9 @@ button:focus {
       #container #sortContainer #goButton:hover {
         background-color: #9a8bed;
         border-color: #9a8bed; }
+  #container #githubLink {
+    color: #629BE9 !important;
+    margin-top: 25px !important;
+    font-size: 1em !important; }
 
 /*# sourceMappingURL=style.css.map */
