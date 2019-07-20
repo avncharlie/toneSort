@@ -21,6 +21,7 @@ toneSort is a project that visualises many different sorting algorithms with sou
 * Cocktail sort
 
 ![GIF of toneSort using radix sort on an unordered list](https://github.com/avncharlie/toneSort/blob/master/media/radix.gif?raw=true)
+
 _Note the comparisons!_
 
 ## Feedback
